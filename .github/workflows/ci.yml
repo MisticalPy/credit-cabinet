@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    services:
+      db:
+        image: postgres:18
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U test -d test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      SECRET_KEY: ci-only-not-a-secret
+      DATABASE_URL: postgres://test:test@localhost:5432/test
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v9.0.0
+
+      - name: Install dependencies
+        run: uv sync --locked --all-groups
+      - name: Ruff lint
+        run: uv run ruff check .
+      - name: Ruff format
+        run: uv run ruff format --check .
+      - name: Migrations are up to date
+        run: uv run manage.py makemigrations --check --dry-run --no-input
+      - name: Tests
+        run: uv run pytest

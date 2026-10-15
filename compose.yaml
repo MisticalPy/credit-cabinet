@@ -1,0 +1,41 @@
+x-app_setup: &app_setup
+  build: ./backend
+  env_file: .env
+  environment:
+    DATABASE_URL: postgres://${POSTGRES_USER:?set in .env}:${POSTGRES_PASSWORD:?set in .env}@db:5432/${POSTGRES_DB:?set in .env}
+
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?set in .env}
+      POSTGRES_USER: ${POSTGRES_USER:?set in .env}
+    healthcheck:
+      test: pg_isready -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB}
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - pg_data:/var/lib/postgresql
+    restart: unless-stopped
+
+  migrate:
+    <<: *app_setup
+    command: ["python", "manage.py", "migrate", "--noinput"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    <<: *app_setup
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+volumes:
+  pg_data:
