@@ -1,0 +1,32 @@
+repos:
+  # 1. Базовые проверки файлов
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-yaml            # Проверяет синтаксис YAML-файлов
+      - id: check-toml            # Проверяет синтаксис TOML
+      - id: check-merge-conflict  # Ловит забытые маркеры конфликтов слияния
+      - id: detect-private-key    # Ищет случайно забытые приватные ключи
+      - id: end-of-file-fixer     # Добавляет пустую строку в конец файла
+      - id: trailing-whitespace   # Удаляет лишние пробелы на концах строк
+      - id: mixed-line-ending     # Приводит окончания строк к одному стилю
+      - id: no-commit-to-branch   # Запрещает коммитить напрямую в main
+        args: [--branch, main]
+
+  # 2. Линтер и форматтер (Ruff), только backend/
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.0
+    hooks:
+      - id: ruff-check
+        args: [--fix, --exit-non-zero-on-fix]
+        files: ^backend/
+      - id: ruff-format
+        files: ^backend/
+
+  # 3. Синхронизация uv.lock с pyproject.toml проекта backend
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.11.29
+    hooks:
+      - id: uv-lock
+        args: [--project, backend]
+        files: ^backend/(pyproject\.toml|uv\.lock)$

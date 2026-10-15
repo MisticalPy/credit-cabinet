@@ -1,0 +1,16 @@
+# Окружение и секреты
+.venv
+.env
+
+# Мусор Python
+**/__pycache__
+**/*.py[cod]
+
+# Кеши инструментов
+.pytest_cache
+.ruff_cache
+.coverage
+htmlcov
+
+# Локальные данные
+media
