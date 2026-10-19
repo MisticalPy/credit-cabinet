@@ -27,6 +27,8 @@ if USE_HTTPS:
 
 
 INSTALLED_APPS = [
+    # Админка
+    "unfold",
     # Django
     "django.contrib.admin",
     "django.contrib.auth",
@@ -39,6 +41,41 @@ INSTALLED_APPS = [
 ]
 
 AUTH_USER_MODEL = "users.User"
+
+UNFOLD = {
+    "SITE_TITLE": "Кредитный кабинет",
+    "SITE_HEADER": "Кредитный кабинет",
+    "SITE_SYMBOL": "account_balance",
+    "BORDER_RADIUS": "8px",
+    "COLORS": {
+        "base": {
+            "50": "oklch(98.5% 0 0)",
+            "100": "oklch(97% 0 0)",
+            "200": "oklch(92.2% 0 0)",
+            "300": "oklch(87% 0 0)",
+            "400": "oklch(70.8% 0 0)",
+            "500": "oklch(55.6% 0 0)",
+            "600": "oklch(43.9% 0 0)",
+            "700": "oklch(37.1% 0 0)",
+            "800": "oklch(26.9% 0 0)",
+            "900": "oklch(20.5% 0 0)",
+            "950": "oklch(14.5% 0 0)",
+        },
+        "primary": {
+            "50": "oklch(97.3% .013 29.3)",
+            "100": "oklch(94.6% .03 29.3)",
+            "200": "oklch(89.5% .06 29.3)",
+            "300": "oklch(82% .11 29.3)",
+            "400": "oklch(72% .17 29.3)",
+            "500": "oklch(61.8% .226 29.3)",
+            "600": "oklch(55% .21 29.3)",
+            "700": "oklch(48% .18 29.3)",
+            "800": "oklch(41% .15 29.3)",
+            "900": "oklch(35% .12 29.3)",
+            "950": "oklch(25% .09 29.3)",
+        },
+    },
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
