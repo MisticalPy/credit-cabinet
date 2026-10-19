@@ -1,0 +1,40 @@
+:root {
+    --red: #ef3124;
+    --bg-light: #ffffff;
+    --feedback-bg: var(--red);
+    --feedback-bg-hover: #d82a1e;
+}
+
+/* ===== Floating feedbackBuitton button ===== */
+.feedbackRightDown {
+    position: fixed;
+    right: 16px;
+    bottom: 48px;
+    z-index: 100;
+}
+
+.feedbackButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    background-color: var(--feedback-bg);
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.feedbackButton:hover {
+    background-color: var(--feedback-bg-hover);
+}
+
+.feedbackButton:active {
+    transform: scale(0.95);
+}
+
+.feedbackButton svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--bg-light);
+}

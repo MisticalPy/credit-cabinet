@@ -1,0 +1,137 @@
+
+.Header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: 1140px;
+    height: 104px;
+    background-color: #000000;
+    /*padding: 0 40px;*/
+    box-sizing: border-box;
+}
+
+.headerContent {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 32px;
+    max-width: 1140px;
+    margin: 0 auto;
+    gap: 32px;
+}
+
+.headerLogo {
+    height: 40px;
+    width: auto;
+    flex-shrink: 0;
+}
+
+.headerButtonPrivatePerson,
+.headerButtonSmallBusiness,
+.headerButtonBigBusiness {
+    flex-shrink: 0;
+}
+
+.headerButtonPrivatePerson a,
+.headerButtonSmallBusiness a,
+.headerButtonBigBusiness a {
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    transition: opacity 0.2s ease;
+}
+
+.headerButtonPrivatePerson a:hover,
+.headerButtonSmallBusiness a:hover,
+.headerButtonBigBusiness a:hover {
+    opacity: 0.7;
+}
+
+.headerText {
+    margin: 0;
+    font-weight: 500;
+    font-size: 16px;
+    white-space: nowrap;
+}
+
+.SmartSearch {
+    flex-shrink: 0;
+    margin-left: auto;
+    margin-right: 16px;
+}
+
+.SmartSearchLink {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    /*background: url('src/assets/search-icon.svg') no-repeat center;*/
+    background-size: contain;
+}
+
+.headerRightButtons {
+    display: flex;
+    padding-left: 30px;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.headerRightButtonsR {
+    height: 40px;
+    width: 100px;
+
+}
+
+.headerRightButtonsL {
+    height: 40px;
+    width: 150px;
+}
+
+.headerRightButtonsL a,
+.headerRightButtonsR a {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    transition: opacity 0.2s ease;
+}
+
+.headerRightButtonsL a:hover,
+.headerRightButtonsR a:hover {
+    opacity: 0.85;
+}
+
+/* Кнопка "Стать клиентом" */
+.willClient {
+    background-color: #3a3a3a;
+    color: #ffffff;
+    border: none;
+}
+
+.willClientText {
+    margin: 0;
+    color: #ffffff;
+}
+
+.inCabinet {
+    background-color: #ef3124;
+    color: #ffffff;
+    border: none;
+}
+
+.inCabinetText {
+    margin: 0;
+    color: #ffffff;
+}

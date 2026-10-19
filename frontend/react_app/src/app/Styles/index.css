@@ -1,0 +1,21 @@
+:root {
+  --red: #ef3124;
+  --bg: #000000;
+  --bg-light: #ffffff;
+  --card-light: #e9eaee;
+  --muted: #9b9b9b;
+
+  body {
+    font-family: "Alfa Interface Sans",system-ui,
+    -apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,
+    Noto Sans,sans-serif,"Segoe UI",Roboto,
+    "Helvetica Neue",Helvetica,sans-serif;
+    background: var(--bg);
+    height: 100%;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+}
