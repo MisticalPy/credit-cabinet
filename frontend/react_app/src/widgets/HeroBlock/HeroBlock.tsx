@@ -1,12 +1,14 @@
 // @ts-ignore
 import React from 'react';
 import './HeroBlock.css'
+import Wallet from "./Wallet.tsx";
 
 function HeroBlock(){
     return (
         <>
             <div className="hero-block">
                 <div className={"Main-container"}>
+                    <Wallet></Wallet>
                     <h1 className={"main-text"}>Умный кредитный кабинет
                         предпринимателя
                         малого и микробизнеса</h1>

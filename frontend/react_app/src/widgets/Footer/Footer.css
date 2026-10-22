@@ -534,32 +534,6 @@
     color: var(--benefit-title);
 }
 
-/* ===== Input ===== */
-.ChatInputBar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    height: 64px;
-    padding: 0 12px 0 24px;
-    box-sizing: border-box;
-    border-radius: 32px;
-    background: var(--benefit-card-bg);
-}
-
-.ChatInput {
-    flex: 1;
-    min-width: 0;
-    border: none;
-    outline: none;
-    background: transparent;
-    font: inherit;
-    font-size: 16px;
-    color: var(--benefit-title);
-}
-
-.ChatInput::placeholder {
-    color: var(--benefit-text);
-}
 
 .ChatSend {
     display: flex;

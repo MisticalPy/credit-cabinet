@@ -1,8 +1,14 @@
-// @ts-ignore
-import React from "react";
-import './Styles/index.css'
-import MainPage from "../pages/MainPage";
+import { BrowserRouter } from "react-router-dom";
+import "./Styles/index.css";
+import Router from "./routing/Router.tsx";
+import {ChatProvider} from "../widgets/Footer/Chat/ChatContext.tsx";
 
-export const App = () => <MainPage />;
+const App = () => (
+    <BrowserRouter>
+        <ChatProvider>
+            <Router />
+        </ChatProvider>
+    </BrowserRouter>
+);
 
 export default App;

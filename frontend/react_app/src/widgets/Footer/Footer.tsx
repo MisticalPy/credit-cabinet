@@ -1,6 +1,7 @@
 // @ts-ignore
 import React, { useState } from 'react';
 import './Footer.css';
+import { useLocation, useNavigate, Outlet } from 'react-router-dom';
 import FeedbackBuitton from "../../shared/UI/feedback";
 
 const CIRCLE_LENGTH = 2 * Math.PI * 20;
@@ -51,7 +52,12 @@ function Icon({ name }: { name: string }) {
 }
 
 function Footer(){
-    const [activeItem, setActiveItem] = useState('chat');
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const currentPath = location.pathname.replace(/^\//, '');
+    const activeItem = currentPath || 'chat';
+
     const [collapsed, setCollapsed] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userName, setUserName] = useState('Дима Маленький'); // need replace on real data
@@ -61,6 +67,10 @@ function Footer(){
     const handleLogin = () => {
         setUserName('Дима Маленький');
         setIsLoggedIn(true);
+    };
+
+    const handleNavClick = (path: string) => {
+        navigate(`/${path}`);
     };
 
     return (
@@ -151,8 +161,8 @@ function Footer(){
                                             role="button"
                                             tabIndex={0}
                                             title={item.label}
-                                            onClick={() => setActiveItem(item.id)}
-                                            onKeyDown={(e) => e.key === 'Enter' && setActiveItem(item.id)}
+                                            onClick={() => handleNavClick(item.id)}
+                                            onKeyDown={(e) => e.key === 'Enter' && handleNavClick(item.id)}
                                         >
                                             <div className="SideNavIcon">
                                                 <Icon name={item.icon} />
@@ -185,22 +195,7 @@ function Footer(){
                             </div>
 
                             <div className="ChatPanel">
-                                <div className="ChatMessages">
-                                    <h3 className="ChatGreeting">Здравствуйте, подберем кредит?</h3>
-                                </div>
-
-                                <form className="ChatInputBar" onSubmit={(e) => e.preventDefault()}>
-                                    <input
-                                        className="ChatInput"
-                                        type="text"
-                                        placeholder="Сообщение"
-                                    />
-                                    <button className="ChatSend" type="submit" aria-label="Отправить">
-                                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                                            <path d="M12 19V5M12 5l-6 6M12 5l6 6" />
-                                        </svg>
-                                    </button>
-                                </form>
+                                <Outlet />
                             </div>
                         </div>
                     </section>
