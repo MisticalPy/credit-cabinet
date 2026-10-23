@@ -3,7 +3,7 @@ import MainPage from "../../pages/MainPage";
 import ChatView from "../../widgets/Footer/Chat";
 import DashboardView from "../../widgets/Footer/Dashboard";
 import FaqView from "../../widgets/Footer/FAQ";
-import Smart_calculator from "../../widgets/Footer/Smart_calculator";
+// import Smart_calculator from "../../widgets/Footer/Smart_calculator";
 
 const NotFound = () => (
     <div>
@@ -18,7 +18,7 @@ const Router = () => (
             <Route path="chat" element={<ChatView />} />
             <Route path="dashboard" element={<DashboardView />} />
             <Route path="faq" element={<FaqView />} />
-            <Route path="calculator" element={<Smart_calculator />} />
+            {/*<Route path="calculator" element={<Smart_calculator />} />*/}
         </Route>
         <Route path="*" element={<NotFound />} />
     </Routes>

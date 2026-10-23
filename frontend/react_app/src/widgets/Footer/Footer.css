@@ -245,7 +245,7 @@
 .ChatWindow {
     display: flex;
     width: 100%;
-    height: 620px;
+    height: 700px;
     padding: 6px 6px 6px 0;
     box-sizing: border-box;
     border-radius: 32px;
@@ -566,5 +566,207 @@
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
+}
+
+.loan-catalog {
+    --lc-text: #1f1f1f;
+    --lc-muted: #757575;
+    --lc-card: #f1f2f4;
+    --lc-pill: #e8e9ec;
+    --lc-dark: #1c1c1c;
+
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 24px 32px;
+    color: var(--lc-text);
+    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+.loan-catalog__title {
+    margin: 0 0 32px;
+    text-align: center;
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+    line-height: 1.15;
+}
+
+/* Tabs */
+.loan-catalog__tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 32px;
+}
+
+.loan-catalog__tab {
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--lc-pill);
+    color: var(--lc-text);
+    font: inherit;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.loan-catalog__tab:hover {
+    background: #dcdde1;
+}
+
+.loan-catalog__tab.is-active {
+    background: var(--lc-dark);
+    color: #fff;
+}
+
+.loan-catalog__tab:focus-visible,
+.loan-card__btn:focus-visible {
+    outline: 2px solid #4f7cff;
+    outline-offset: 2px;
+}
+
+/* Grid */
+.loan-catalog__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 24px;
+}
+
+/* Card */
+.loan-card {
+    display: flex;
+    overflow: hidden;
+    border-radius: 20px;
+    background: var(--lc-card);
+}
+
+.loan-card__media {
+    flex: 0 0 178px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 72px;
+}
+
+.loan-card--open .loan-card__media {
+    background: #ffc9c9;
+}
+.loan-card--develop .loan-card__media {
+    background: #a3f5c8;
+}
+.loan-card--current .loan-card__media {
+    background: #c9bdff;
+}
+
+.loan-card__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 24px 20px;
+}
+
+.loan-card__name {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.loan-card__params {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.loan-card__param {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.loan-card__label {
+    color: var(--lc-muted);
+    font-size: 14px;
+}
+
+.loan-card__value {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.35;
+    white-space: nowrap;
+}
+
+/* Actions */
+.loan-card__actions {
+    display: flex;
+    gap: 12px;
+    margin-top: auto;
+}
+
+.loan-card__btn {
+    height: 40px;
+    padding: 0 24px;
+    border: 1px solid var(--lc-dark);
+    border-radius: 10px;
+    background: transparent;
+    color: var(--lc-dark);
+    font: inherit;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.loan-card__btn:first-child {
+    flex: 1;
+    max-width: 161px;
+}
+
+.loan-card__btn:hover {
+    background: var(--lc-dark);
+    color: #fff;
+}
+
+.loan-card__btn--icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    padding: 0;
+}
+
+.loan-catalog__note {
+    margin: 24px 0 0;
+    text-align: center;
+    color: var(--lc-muted);
+    font-size: 12px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .loan-catalog__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 520px) {
+    .loan-catalog {
+        padding: 32px 16px 24px;
+    }
+    .loan-card {
+        flex-direction: column;
+    }
+    .loan-card__media {
+        flex-basis: 120px;
+        font-size: 56px;
+    }
+    .loan-card__params {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 

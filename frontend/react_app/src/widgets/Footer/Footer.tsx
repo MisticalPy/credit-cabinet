@@ -1,8 +1,11 @@
 // @ts-ignore
 import React, { useState } from 'react';
-import './Footer.css';
 import { useLocation, useNavigate, Outlet } from 'react-router-dom';
+import { SPHERES, type LoanOption, type Range } from './loans';
+
+import './Footer.css';
 import FeedbackBuitton from "../../shared/UI/feedback";
+
 
 const CIRCLE_LENGTH = 2 * Math.PI * 20;
 
@@ -16,20 +19,23 @@ const steps = [
 const ICONS: Record<string, string> = {
     chat: 'M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z',
     dashboard: 'M5 20V10M12 20V4M19 20v-7',
-    calculator:
-        'M6 3h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01',
+    // calculator:
+    //     'M6 3h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01',
     archive: 'M3 4h18v4H3zM5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8M10 12h4',
     requests:
         'M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM9 8h6M9 12h6M9 16h4',
     faq: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5M12 17h.01',
     user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0',
     collapse: 'M11 17l-5-5 5-5M18 17l-5-5 5-5',
+    open: '🏪',
+    develop: '📈',
+    current: '💳',
 };
 
 const NAV_ITEMS = [
     { id: 'chat', label: 'Чат', icon: 'chat' },
     { id: 'dashboard', label: 'Дашборд', icon: 'dashboard' },
-    { id: 'calculator', label: 'Умный калькулятор', icon: 'calculator' },
+    // { id: 'calculator', label: 'Умный калькулятор', icon: 'calculator' },
     { id: 'archive', label: 'Архив', icon: 'archive' },
     { id: 'requests', label: 'Мои заявки', icon: 'requests' },
     { id: 'faq', label: 'FAQ', icon: 'faq' },
@@ -51,7 +57,42 @@ function Icon({ name }: { name: string }) {
     );
 }
 
-function Footer(){
+
+const nf = new Intl.NumberFormat('ru-RU');
+const money = (n: number) => nf.format(n).replace(/\u00A0/g, ' ');
+
+interface Props {
+    onApply?: (sphereId: string, option: LoanOption) => void;
+    onCalculate?: (sphereId: string, option: LoanOption) => void;
+}
+
+function Value({ label, range, unit }: { label: string; range: Range; unit: string }) {
+    const [min, max] = range;
+    const fmt = unit === 'мес.' ? String : money;
+    return (
+        <div className="loan-card__param">
+            <span className="loan-card__label">{label}</span>
+            {min === max ? (
+                <b className="loan-card__value">
+                    {fmt(min)} {unit}
+                </b>
+            ) : (
+                <b className="loan-card__value">
+                    <span>от {fmt(min)}</span>
+                    <span>
+            до {fmt(max)} {unit}
+          </span>
+                </b>
+            )}
+        </div>
+    );
+}
+
+
+function Footer({ onApply, onCalculate }: Props){
+    const [activeId, setActiveId] = useState(SPHERES[0].id);
+    const sphere = SPHERES.find((s) => s.id === activeId) ?? SPHERES[0];
+
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -130,6 +171,67 @@ function Footer(){
                                 </div>
                             ))}
                         </div>
+                    </section>
+                    <section className="loan-catalog">
+                        <h2 className="loan-catalog__title">Кредиты для бизнеса</h2>
+
+                        <div className="loan-catalog__tabs" role="tablist">
+                            {SPHERES.map((s) => (
+                                <button
+                                    key={s.id}
+                                    role="tab"
+                                    aria-selected={s.id === activeId}
+                                    className={`loan-catalog__tab${s.id === activeId ? ' is-active' : ''}`}
+                                    onClick={() => setActiveId(s.id)}
+                                >
+                                    {s.title}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="loan-catalog__grid" role="tabpanel">
+                            {sphere.options.map((opt) => (
+                                <article key={opt.id} className={`loan-card loan-card--${opt.id}`}>
+                                    <div className="loan-card__media" aria-hidden="true">
+                                        <span>{ICONS[opt.id]}</span>
+                                    </div>
+
+                                    <div className="loan-card__body">
+                                        <h3 className="loan-card__name">{opt.title}</h3>
+
+                                        <div className="loan-card__params">
+                                            <Value label="Сумма" range={opt.amount} unit="₽" />
+                                            <Value label="Платёж" range={opt.payment} unit="₽" />
+                                            <Value label="Срок" range={opt.term} unit="мес." />
+                                        </div>
+
+                                        <div className="loan-card__actions">
+                                            <button
+                                                type="button"
+                                                className="loan-card__btn"
+                                                onClick={() => onApply?.(sphere.id, opt)}
+                                            >
+                                                Получить
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="loan-card__btn loan-card__btn--icon"
+                                                aria-label="Калькулятор"
+                                                onClick={() => onCalculate?.(sphere.id, opt)}
+                                            >
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                                    <path d="M7 2h10a3 3 0 0 1 3 3v14a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3Zm0 2a1 1 0 0 0-1 1v3h12V5a1 1 0 0 0-1-1H7Zm11 6H6v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-9ZM8 12h2v2H8v-2Zm3 0h2v2h-2v-2Zm3 0h2v2h-2v-2ZM8 15h2v2H8v-2Zm3 0h2v2h-2v-2Zm3 0h2v2h-2v-2Z" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </article>
+                            ))}
+                        </div>
+
+                        <p className="loan-catalog__note">
+                            Указаны ориентировочные диапазоны. Итоговые условия определяет кредитор.
+                        </p>
                     </section>
                     <section className="ChatPreview">
                         <h2 className="ChatPreviewTitle">Начните общение с ИИ прямо сейчас</h2>

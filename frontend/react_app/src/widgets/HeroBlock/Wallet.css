@@ -53,14 +53,15 @@
 
 .coin-2 {
 
-    left: 218px;
-    rotate: 10deg;
+    left: 230px;
+    rotate: 9deg;
     animation-delay: 0.7s;
+    bottom: 301px;
 }
 
 .coin-1 {
-    left: 130px;
-    rotate: -9deg;
+    left: 135px;
+    rotate: 5deg;
     animation-delay: 0.55s;
 }
 
