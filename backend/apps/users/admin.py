@@ -5,7 +5,16 @@ from django.contrib.auth.models import Group
 from unfold.admin import ModelAdmin
 from unfold.forms import AdminPasswordChangeForm, UserChangeForm, UserCreationForm
 
-from apps.users.models import User
+from apps.users.models import BusinessProfile, User
+
+
+@admin.register(BusinessProfile)
+class BusinessProfileAdmin(ModelAdmin):
+    list_display = ["business_type", "company_name", "inn", "industry", "monthly_revenue", "user"]
+    list_filter = ["business_type", "industry"]
+    search_fields = ["company_name", "inn", "user__username"]
+    list_select_related = ["user"]
+    readonly_fields = ["created_at", "updated_at"]
 
 
 @admin.register(User)
