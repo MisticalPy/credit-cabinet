@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "ninja",
     # my app
     "apps.users",
+    "apps.products",
 ]
 
 AUTH_USER_MODEL = "users.User"
