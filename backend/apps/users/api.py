@@ -4,9 +4,10 @@ from ninja import Router
 from ninja.errors import HttpError
 
 from apps.users import services
-from apps.users.schemas import CredentialsIn, UserOut
+from apps.users.schemas import CredentialsIn, ProfileIn, ProfileOut, UserOut
 
 router = Router(tags=["auth"])
+profile_router = Router(tags=["profile"])
 
 
 @router.get("/csrf", response={204: None}, auth=None)
@@ -44,3 +45,17 @@ def login(request, data: CredentialsIn):
 def logout(request):
     auth.logout(request)
     return 204, None
+
+
+@profile_router.get("", response=ProfileOut)
+def get_my_profile(request):
+    profile = services.get_profile(request.user)
+    if profile is None:
+        raise HttpError(404, "Профиль ещё не заполнен")
+    return profile
+
+
+@profile_router.put("", response={200: ProfileOut, 201: ProfileOut})
+def put_my_profile(request, data: ProfileIn):
+    profile, created = services.save_profile(user=request.user, data=data.model_dump())
+    return (201 if created else 200), profile
