@@ -2,16 +2,8 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
-from apps.core.exceptions import ServiceError
+from apps.users.exceptions import UsernameTakenError, WeakPasswordError
 from apps.users.models import User
-
-
-class UsernameTakenError(ServiceError):
-    pass
-
-
-class WeakPasswordError(ServiceError):
-    pass
 
 
 def normalize_username(username: str) -> str:

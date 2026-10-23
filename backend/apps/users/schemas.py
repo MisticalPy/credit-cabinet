@@ -1,7 +1,6 @@
-from django.contrib.auth import get_user_model
 from ninja import Field, ModelSchema, Schema
 
-User = get_user_model()
+from apps.users.models import User
 
 
 class UserOut(ModelSchema):
