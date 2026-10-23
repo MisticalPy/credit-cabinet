@@ -15,7 +15,9 @@
     --benefit-text: #6b6b6f;
 }
 
-
+.Panel{
+    width: 100%;
+}
 .Infinite {
     position: relative;
     display: flex;

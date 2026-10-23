@@ -296,7 +296,7 @@ function Footer({ onApply, onCalculate }: Props){
                                 </div>
                             </div>
 
-                            <div className="ChatPanel">
+                            <div className="Panel">
                                 <Outlet />
                             </div>
                         </div>

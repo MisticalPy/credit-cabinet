@@ -69,7 +69,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         [messages, input, isStreaming, send],
     );
 
-    return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
+    return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>
 }
 
 export function useChat() {

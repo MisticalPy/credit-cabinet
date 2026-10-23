@@ -10,6 +10,7 @@
 .ChatPanel {                       /* use your real class name */
     display: flex;
     flex-direction: column;
+    height: 688px;
     min-height: 0;
     padding: 20px 30px;
 }
