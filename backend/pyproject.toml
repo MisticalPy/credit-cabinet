@@ -6,6 +6,7 @@ dependencies = [
     "django>=6.1.2",
     "django-environ>=0.14.0",
     "django-ninja>=1.7.1",
+    "django-unfold>=0.110.0",
     "gunicorn>=26.2.0",
     "psycopg[binary]>=3.3.6",
 ]
