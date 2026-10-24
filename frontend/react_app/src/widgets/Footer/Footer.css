@@ -18,6 +18,8 @@
 .Panel{
     width: 100%;
 }
+
+
 .Infinite {
     position: relative;
     display: flex;
@@ -254,7 +256,7 @@
     background: var(--bg);
 }
 
-/* ===== Sidebar ===== */
+
 .SideNav {
     display: flex;
     flex-direction: column;
@@ -509,23 +511,7 @@
     }
 }
 
-.ChatPanel {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-width: 0;
-    padding: 14px;
-    box-sizing: border-box;
-    border-radius: 28px;
-    background: var(--bg-light);
-}
 
-.ChatMessages {
-    display: flex;
-    flex: 1;
-    align-items: center;
-    justify-content: center;
-}
 
 .ChatGreeting {
     margin: 0;
