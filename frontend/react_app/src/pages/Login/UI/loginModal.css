@@ -1,0 +1,86 @@
+.login-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.login-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: min(360px, calc(100vw - 32px));
+    padding: 24px;
+    border-radius: 12px;
+    background: #1f1f23;
+    color: #fff;
+}
+
+.login-modal h2 {
+    margin: 0 0 4px;
+}
+
+.login-modal input {
+    padding: 10px 12px;
+    border: 1px solid #3a3a42;
+    border-radius: 8px;
+    background: #2a2a30;
+    color: inherit;
+    font: inherit;
+}
+
+.login-error {
+    margin: 0;
+    color: #ff6b6b;
+    font-size: 14px;
+}
+
+.login-submit {
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: #ef3124;
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+}
+
+.login-submit:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.login-switch {
+    border: 0;
+    background: none;
+    color: #9a9aa5;
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Locked content area for guests (see guards.tsx) */
+.auth-locked {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    height: 100%;
+    min-height: 240px;
+    text-align: center;
+    color: #ffffff;
+}
+
+.auth-locked button {
+    padding: 10px 20px;
+    border: 0;
+    border-radius: 8px;
+    background: #ef3124;
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+}
