@@ -5,6 +5,8 @@ import DashboardView from "../../widgets/Footer/Dashboard";
 import FaqView from "../../widgets/Footer/FAQ";
 import { RequireAuth } from "./Guards";
 // import Smart_calculator from "../../widgets/Footer/Smart_calculator";
+import AccountPage from "../../pages/Account";
+import ArchiveView from "../../widgets/Footer/Archive";
 
 const NotFound = () => (
     <div>
@@ -20,10 +22,12 @@ const Router = () => (
                 <Route index element={<Navigate to="chat" replace />} />
                 <Route path="chat" element={<ChatView />} />
                 <Route path="dashboard" element={<DashboardView />} />
+                <Route path="archive" element={<ArchiveView />}/>
                 <Route path="faq" element={<FaqView />} />
                 {/*<Route path="calculator" element={<Smart_calculator />} />*/}
             </Route>
         </Route>
+        <Route path="/account" element={<AccountPage />} />
 
         <Route path="*" element={<NotFound />} />
     </Routes>

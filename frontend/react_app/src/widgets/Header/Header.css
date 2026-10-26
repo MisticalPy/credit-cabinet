@@ -125,9 +125,20 @@
     color: #ffffff;
 }
 
+.willClientTextA {
+    margin: 0;
+    color: #000000;
+}
+
 .inCabinet {
     background-color: #ef3124;
     color: #ffffff;
+    border: none;
+}
+
+.inCabinetA {
+    background-color: #ffffff;
+    color: #000000;
     border: none;
 }
 

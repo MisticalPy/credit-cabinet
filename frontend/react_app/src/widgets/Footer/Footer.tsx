@@ -79,6 +79,9 @@ interface Props {
     onCalculate?: (sphereId: string, option: Product) => void;
 }
 
+/** Amount (₽) and term (months) picked on the dashboard. */
+type ApplyValues = { amount: number; term: number };
+
 function Value({ label, range, unit }: { label: string; range: Range; unit: string }) {
     const [min, max] = range;
     const fmt = unit === 'мес.' ? String : money;
@@ -108,8 +111,14 @@ function Footer({ onApply, onCalculate }: Props){
     const spheres = useMemo(() => groupByPurpose(products), [products]);
     const [activeId, setActiveId] = useState<Purpose | null>(null);
     const sphere = spheres.find((s) => s.id === activeId) ?? spheres[0];
-    const [applyRequest, setApplyRequest] = useState<{ product: Product; ts: number } | null>(null);
+    const [applyRequest, setApplyRequest] = useState<{
+        product: Product;
+        ts: number;
+        values?: ApplyValues;
+    } | null>(null);
+
     const formRef = useRef<HTMLDivElement>(null);
+    const chatRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
         if (applyRequest) {
@@ -124,20 +133,46 @@ function Footer({ onApply, onCalculate }: Props){
     const activeItem = currentPath || 'chat';
 
     const [collapsed, setCollapsed] = useState(false);
-    // const [isLoggedIn, setIsLoggedIn] = useState(false);
-    // const [userName, setUserName] = useState('Дима Маленький'); // need replace on real data
-
-
-
-    // const handleLogin = () => {
-    //     // setUserName('Дима Маленький');
-    //     setIsLoggedIn(true);
-    //
-    // }
 
     const handleNavClick = (path: string) => {
         navigate(`/${path}`);
     };
+
+    const handleCalculate = (sphereId: string, opt: Product) => {
+        navigate('/dashboard', {
+            state: {
+                preset: {
+                    productId: opt.id,
+                    name: opt.name,
+                    minAmount: Number(opt.min_amount),
+                    maxAmount: Number(opt.max_amount),
+                    rate: Number(opt.rate),
+                    minTermMonths: opt.min_term_months,
+                    maxTermMonths: opt.max_term_months,
+                },
+            },
+        });
+        onCalculate?.(sphereId, opt);
+        // the dashboard opens inside the chat window below the catalog, so scroll to it
+        requestAnimationFrame(() =>
+            chatRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+        );
+    };
+
+    // Called by the dashboard ("Отправить"): opens the application form with its values.
+    const openApplication = (productId: Product['id'], values: ApplyValues) => {
+        const product = products.find((p) => p.id === productId);
+        if (product) setApplyRequest({ product, ts: Date.now(), values });
+    };
+
+    useEffect(() => {
+        const handler = (e: Event) => {
+            const { productId, values } = (e as CustomEvent).detail;
+            openApplication(productId, values);
+        };
+        window.addEventListener('loan:open-application', handler);
+        return () => window.removeEventListener('loan:open-application', handler);
+    }, [products]);
 
     return (
         <>
@@ -263,7 +298,7 @@ function Footer({ onApply, onCalculate }: Props){
                                                         type="button"
                                                         className="loan-card__btn loan-card__btn--icon"
                                                         aria-label="Калькулятор"
-                                                        onClick={() => onCalculate?.(sphere.id, opt)}
+                                                        onClick={() => handleCalculate(sphere.id, opt)}
                                                     >
                                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                                             <path d="M7 2h10a3 3 0 0 1 3 3v14a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3Zm0 2a1 1 0 0 0-1 1v3h12V5a1 1 0 0 0-1-1H7Zm11 6H6v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-9ZM8 12h2v2H8v-2Zm3 0h2v2h-2v-2Zm3 0h2v2h-2v-2ZM8 15h2v2H8v-2Zm3 0h2v2h-2v-2Zm3 0h2v2h-2v-2Z" />
@@ -277,11 +312,8 @@ function Footer({ onApply, onCalculate }: Props){
                             </>
                         )}
 
-                        <p className="loan-catalog__note">
-                            Указаны ориентировочные диапазоны. Итоговые условия определяет кредитор.
-                        </p>
                     </section>
-                    <section className="ChatPreview">
+                    <section className="ChatPreview" ref={chatRef}>
                         <h2 className="ChatPreviewTitle">Начните общение с ИИ прямо сейчас</h2>
 
                         <div className="ChatWindow">
@@ -342,7 +374,7 @@ function Footer({ onApply, onCalculate }: Props){
                             </div>
 
                             <div className="Panel">
-                                <Outlet />
+                                <Outlet context={{ openApplication }} />
                             </div>
                         </div>
                     </section>
@@ -350,6 +382,7 @@ function Footer({ onApply, onCalculate }: Props){
                         {applyRequest && (
                             <LoanApplicationForm
                                 product={applyRequest.product}
+                                initialValues={applyRequest.values}
                                 isLoggedIn={status === 'ready'}
                                 onLogin={openLogin}
                                 onClose={() => setApplyRequest(null)}
