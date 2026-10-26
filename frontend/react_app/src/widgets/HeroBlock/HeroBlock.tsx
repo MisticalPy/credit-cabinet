@@ -3,6 +3,12 @@ import React from 'react';
 import './HeroBlock.css'
 import Wallet from "./Wallet.tsx";
 
+function scrollToCatalog() {
+    document
+        .querySelector('.loan-catalog')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 function HeroBlock(){
     return (
         <>
@@ -14,7 +20,14 @@ function HeroBlock(){
                         малого и микробизнеса</h1>
                     <p className={"bottom-text"}>Подберите и расчитайте кредит с помощью умного ИИ-помошника</p>
                     <div className={"ButtonDown"}>
-                        <a className={"buttonComponentGetMoney"}>
+                        <a
+                            className={"buttonComponentGetMoney"}
+                            href="#loan-catalog"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                scrollToCatalog();
+                            }}
+                        >
                             <span className={"getMoney"}>Получить деньги</span>
                         </a>
                     </div>
@@ -30,12 +43,12 @@ function HeroBlock(){
                             <img alt="" className="blockImage" height="48" loading="lazy" src="src/shared/image/diagonal.png" width="48"/>
                         </div>
                         <div className={"Block3"}>
-                            <p className={"blockTextH"}>От 1 до 5 лет</p>
+                            <p className={"blockTextH"}>От 1 до 15 лет</p>
                             <p className={"blockTextP"}>срок кредита</p>
                             <img alt="" className="blockImage" height="48" loading="lazy" src="src/shared/image/calendar.png" width="48"/>
                         </div>
                         <div className={"Block3"}>
-                            <p className={"blockTextH"}>С ИИ выгоднее</p>
+                            <p className={"blockTextH"}>С нами выгоднее</p>
                             <p className={"blockTextP"}>комфортные платежи</p>
                             <img alt="" className="blockImage" height="48" loading="lazy" src="src/shared/image/deposit.png" width="48"/>
                         </div>

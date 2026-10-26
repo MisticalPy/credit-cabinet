@@ -28,9 +28,7 @@
     transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
-.feedbackButton:hover {
-    background-color: var(--feedback-bg-hover);
-}
+
 
 .feedbackButton:active {
     transform: scale(0.95);

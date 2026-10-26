@@ -104,6 +104,12 @@ function Value({ label, range, unit }: { label: string; range: Range; unit: stri
     );
 }
 
+function scrollToCatalog() {
+    document
+        .querySelector('.loan-catalog')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 
 function Footer({ onApply, onCalculate }: Props){
     const { status, user, openLogin } = useAuth();
@@ -204,7 +210,15 @@ function Footer({ onApply, onCalculate }: Props){
                                 <p className="BenefitCardText">
                                     Объяснит условия простыми словами, рассчитает платёж и поможет собрать документы
                                 </p>
-                                <a className="BenefitButton" href="#">Получить кредит</a>
+                                <a
+                                    className="BenefitButton"
+                                    href="#loan-catalog"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        scrollToCatalog();
+                                    }}
+                                >
+                                    Получить кредит</a>
                             </div>
                         </div>
                     </section>
