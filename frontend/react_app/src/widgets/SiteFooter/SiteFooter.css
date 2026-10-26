@@ -1,0 +1,275 @@
+.SiteFooter {
+    --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    margin-top: -40px;
+    padding: 72px 40px 32px;
+    border-radius: 40px 40px 0 0;
+    background: var(--bg);
+    color: #ffffff;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+/* Красное свечение за курсором */
+.SiteFooterGlow {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(
+        520px circle at var(--x, 50%) var(--y, 0%),
+        rgba(239, 49, 36, 0.22),
+        transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 0.6s var(--ease-out);
+    pointer-events: none;
+}
+
+.SiteFooter:hover .SiteFooterGlow {
+    opacity: 1;
+}
+
+.SiteFooterInner {
+    width: 1140px;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.SiteFooterTop {
+    display: grid;
+    grid-template-columns: 1.4fr repeat(3, 1fr);
+    gap: 40px;
+}
+
+/* Каскадное появление блоков */
+.reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    filter: blur(8px);
+    transition:
+        opacity 0.8s var(--ease-out),
+        transform 0.8s var(--ease-out),
+        filter 0.8s var(--ease-out);
+    transition-delay: calc(var(--i, 0) * 90ms);
+}
+
+.SiteFooter.is-visible .reveal {
+    opacity: 1;
+    transform: none;
+    filter: none;
+}
+
+.SiteFooterCtaTitle {
+    margin: 0 0 8px;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.15;
+}
+
+.SiteFooterCtaText {
+    margin: 0 0 24px;
+    color: var(--muted);
+    font-size: 15px;
+}
+
+.SiteFooterBtn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 28px;
+    border: 0;
+    border-radius: 16px;
+    background: var(--red);
+    color: #ffffff;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    overflow: hidden;
+    transition:
+        transform 0.4s var(--ease-spring),
+        box-shadow 0.4s var(--ease-out);
+}
+
+/* Блик, пробегающий по кнопке */
+.SiteFooterBtn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        110deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.45) 50%,
+        transparent 70%
+    );
+    transform: translateX(-120%);
+    transition: transform 0.7s var(--ease-out);
+}
+
+.SiteFooterBtn:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 14px 40px -10px rgba(239, 49, 36, 0.7);
+}
+
+.SiteFooterBtn:hover::after {
+    transform: translateX(120%);
+}
+
+.SiteFooterBtn:active {
+    transform: scale(0.97);
+}
+
+.SiteFooterBtnArrow {
+    transition: transform 0.4s var(--ease-spring);
+}
+
+.SiteFooterBtn:hover .SiteFooterBtnArrow {
+    transform: translateX(5px);
+}
+
+.SiteFooterCol {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.SiteFooterColTitle {
+    margin: 0 0 4px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Подчёркивание рисуется слева направо */
+.SiteFooterLink {
+    color: var(--muted);
+    font-size: 15px;
+    text-decoration: none;
+    background: linear-gradient(var(--red), var(--red)) 0 100% / 0 1px no-repeat;
+    padding-bottom: 2px;
+    transition:
+        color 0.3s var(--ease-out),
+        background-size 0.4s var(--ease-out);
+}
+
+.SiteFooterLink:hover {
+    color: #ffffff;
+    background-size: 100% 1px;
+}
+
+/* Огромный вордмарк: буквы выезжают снизу и прыгают при наведении */
+.SiteFooterWordmark {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 0.25em;
+    margin: 72px 0 40px;
+    font-size: clamp(44px, 9.5vw, 136px);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: #1c1c1e;
+    overflow: hidden;
+    user-select: none;
+}
+
+.SiteFooterWord {
+    display: inline-flex;
+    white-space: nowrap;
+}
+
+.SiteFooterWord span {
+    display: inline-block;
+    transform: translateY(110%);
+    transition:
+        transform 0.9s var(--ease-out),
+        color 0.25s ease;
+    transition-delay: calc(var(--i) * 28ms + 200ms), 0s;
+}
+
+.SiteFooter.is-visible .SiteFooterWord span {
+    transform: none;
+}
+
+.SiteFooter.is-visible .SiteFooterWord span:hover {
+    color: var(--red);
+    transform: translateY(-10%);
+    transition:
+        transform 0.35s var(--ease-spring),
+        color 0.15s ease;
+}
+
+.SiteFooterBottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    padding-top: 24px;
+    border-top: 1px solid #2a2a2a;
+}
+
+.SiteFooterPhones {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 4px 24px;
+}
+
+.SiteFooterPhones a {
+    grid-row: 1;
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.SiteFooterPhones a:hover {
+    color: var(--red);
+}
+
+.SiteFooterPhones span,
+.SiteFooterCopy {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.SiteFooterPhones span {
+    grid-row: 2;
+}
+
+.SiteFooterCopy {
+    margin: 0;
+}
+
+@media (max-width: 900px) {
+    .SiteFooterTop {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 560px) {
+    .SiteFooter {
+        padding: 56px 16px 24px;
+        border-radius: 28px 28px 0 0;
+    }
+
+    .SiteFooterTop {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .SiteFooter *,
+    .SiteFooter *::after {
+        transition: none !important;
+    }
+
+    .reveal,
+    .SiteFooterWord span {
+        opacity: 1;
+        transform: none;
+        filter: none;
+    }
+}
