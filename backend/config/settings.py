@@ -14,6 +14,10 @@ CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
 USE_HTTPS = env.bool("USE_HTTPS", default=False)
 
+LLM_BASE_URL = env("LLM_BASE_URL", default="https://openai.bothub.chat/v1")
+LLM_API_KEY = env("LLM_API_KEY", default="")
+LLM_MODEL = env("LLM_MODEL", default="") or "gpt-4.1-nano"
+
 # HSTS preload is effectively irreversible and not needed for this project
 SILENCED_SYSTEM_CHECKS = ["security.W021"]
 
