@@ -37,6 +37,12 @@ def calculate_payment(
     return PaymentCalculation(monthly_payment=monthly, total=total, overpayment=total - amount)
 
 
+def upsert_product(*, name: str, **fields) -> CreditProduct:
+    """Создаёт продукт или обновляет существующий с тем же названием."""
+    product, _ = CreditProduct.objects.update_or_create(name=name, defaults=fields)
+    return product
+
+
 def get_active_products() -> QuerySet[CreditProduct]:
     return CreditProduct.objects.filter(is_active=True)
 
