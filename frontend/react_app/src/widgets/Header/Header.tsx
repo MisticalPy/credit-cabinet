@@ -4,6 +4,7 @@ import {useState} from "react";
 import './Header.css'
 import {useAuth} from "../../entities/session/model/Auth-context.ts";
 import { ProfileDrawer } from '../../pages/Login/UI/ProfileDrawer';
+import alfa from '../../shared/assets/alfa.svg';
 
 function Header(){
     const { openLogin, status } = useAuth();
@@ -13,7 +14,7 @@ function Header(){
         <>
             <div className={"Header"}>
                 <div className={"headerContent"}>
-                    <img className={"headerLogo"} src={"src/shared/assets/alfa.svg"}/>
+                    <img className={"headerLogo"} src={alfa}/>
                     <div className={"headerButtonPrivatePerson"}>
                         <a href="/">
                             <p className={"headerText"}>Частным лицам</p>

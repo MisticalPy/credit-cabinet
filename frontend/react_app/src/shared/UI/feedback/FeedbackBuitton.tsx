@@ -1,6 +1,7 @@
 // @ts-ignore
 import React, {useEffect, useState} from 'react';
 import './feedback.css';
+import like from '../../image/like.png';
 
 const STARS = [1, 2, 3, 4, 5];
 
@@ -40,7 +41,7 @@ function FeedbackBuitton({onRate}: Props) {
             {!isOpen && (
                 <div className="feedbackRightDown">
                     <div className="feedbackButton" onClick={() => setIsOpen(true)}>
-                        <img className={"feedback_img"} src={"src/shared/image/like.png"}/>
+                        <img className={"feedback_img"} src={like}/>
                     </div>
                 </div>
             )}
