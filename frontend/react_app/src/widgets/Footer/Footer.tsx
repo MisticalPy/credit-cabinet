@@ -397,8 +397,6 @@ function Footer({ onApply, onCalculate }: Props){
                             <LoanApplicationForm
                                 product={applyRequest.product}
                                 initialValues={applyRequest.values}
-                                isLoggedIn={status === 'ready'}
-                                onLogin={openLogin}
                                 onClose={() => setApplyRequest(null)}
                             />
                         )}
