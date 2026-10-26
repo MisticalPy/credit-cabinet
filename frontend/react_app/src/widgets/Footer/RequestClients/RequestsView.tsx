@@ -54,7 +54,7 @@ export default function RequestsView() {
 
     if (items === null) {
         return (
-            <section className="Archive Archive--empty" aria-label="Мои заявки">
+            <section className="Archive Requests Archive--empty" aria-label="Мои заявки">
                 <p className="ArchiveEmpty">Загрузка…</p>
             </section>
         );
@@ -62,7 +62,7 @@ export default function RequestsView() {
 
     if (detail) {
         return (
-            <section className="Archive RequestDetail" aria-label="Заявка">
+            <section className="Archive Requests" aria-label="Заявка">
                 <button type="button" className="ArchiveBtn" onClick={() => setDetail(null)}>
                     ← К списку
                 </button>
@@ -123,21 +123,43 @@ export default function RequestsView() {
 
     if (items.length === 0) {
         return (
-            <section className="Archive Archive--empty" aria-label="Мои заявки">
+            <section className="Archive Requests Archive--empty" aria-label="Мои заявки">
                 <p className="ArchiveEmpty">{error ?? 'Заявок пока нет'}</p>
             </section>
         );
     }
 
     return (
-        <section className="Archive" aria-label="Мои заявки">
+        <section className="Archive Requests" aria-label="Мои заявки">
             {error && <p role="alert">{error}</p>}
             <ul className="ArchiveList">
                 {items.map((a) => (
-                    <li key={a.id} className="ArchiveItem">
-                        <button type="button" className="ArchiveItemTitle" onClick={() => void open(a.id)}>
-                            {a.product_name} · {money(a.amount)} · {a.term_months} мес. ·{' '}
-                            {money(a.monthly_payment)}/мес · {statusLabel(a.status)} · {date(a.created_at)}
+                    <li key={a.id}>
+                        <button type="button" className="RequestCard" onClick={() => void open(a.id)}>
+                            <span className="RequestCardHead">
+                                <span className="RequestCardTitle">{a.product_name}</span>
+                                <span className={`RequestBadge RequestBadge--${a.status}`}>
+                                    {statusLabel(a.status)}
+                                </span>
+                            </span>
+                            <dl className="RequestCardMeta">
+                                <div>
+                                    <dt>Сумма</dt>
+                                    <dd>{money(a.amount)}</dd>
+                                </div>
+                                <div>
+                                    <dt>Срок</dt>
+                                    <dd>{a.term_months} мес.</dd>
+                                </div>
+                                <div>
+                                    <dt>Платёж</dt>
+                                    <dd>{money(a.monthly_payment)}/мес</dd>
+                                </div>
+                                <div>
+                                    <dt>Дата</dt>
+                                    <dd>{date(a.created_at)}</dd>
+                                </div>
+                            </dl>
                         </button>
                     </li>
                 ))}
