@@ -1,5 +1,6 @@
 from django import forms
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.http import HttpResponseRedirect
 from django.utils.html import format_html, format_html_join
 from unfold.admin import ModelAdmin, TabularInline
 from unfold.widgets import (
@@ -12,7 +13,6 @@ from unfold.widgets import (
 from apps.applications import services
 from apps.applications.models import ApplicationStatusHistory, LoanApplication
 from apps.core.exceptions import ServiceError
-from apps.products import services as products_services
 
 Status = LoanApplication.Status
 DECISION_CHOICES = [("", "— выберите —")] + [
@@ -51,25 +51,6 @@ class DecisionForm(forms.ModelForm):
         if "counter_amount_input" in self.fields:
             self.fields["counter_amount_input"].initial = self.instance.suggested_amount
             self.fields["counter_term_input"].initial = self.instance.term_months
-
-    def clean(self):
-        data = super().clean()
-        decision = data.get("decision")
-        if not decision:
-            return data
-        if self.instance.status != Status.REVIEW:
-            raise forms.ValidationError("Решение принимается только по заявке «На рассмотрении»")
-        if decision == Status.COUNTER_OFFER:
-            amount, term = data.get("counter_amount_input"), data.get("counter_term_input")
-            if amount is None or term is None:
-                raise forms.ValidationError("Для встречного предложения укажите сумму и срок")
-            try:
-                products_services.check_conditions(
-                    self.instance.product, amount=amount, term_months=term
-                )
-            except ServiceError as e:
-                raise forms.ValidationError(str(e)) from e
-        return data
 
 
 class StatusHistoryInline(TabularInline):
@@ -200,7 +181,9 @@ class LoanApplicationAdmin(ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         decision = form.cleaned_data.get("decision")
-        if decision:
+        if not decision:
+            return
+        try:
             services.decide(
                 application_id=obj.pk,
                 manager=request.user,
@@ -209,3 +192,13 @@ class LoanApplicationAdmin(ModelAdmin):
                 counter_amount=form.cleaned_data.get("counter_amount_input"),
                 counter_term_months=form.cleaned_data.get("counter_term_input"),
             )
+        except ServiceError as e:
+            # сервис уже откатил свою транзакцию, заявка не изменилась
+            self.message_user(request, str(e), level=messages.ERROR)
+            request.decision_failed = True
+
+    def response_change(self, request, obj):
+        if getattr(request, "decision_failed", False):
+            # без сообщения «успешно сохранено»: возвращаем на ту же страницу
+            return HttpResponseRedirect(request.path)
+        return super().response_change(request, obj)
