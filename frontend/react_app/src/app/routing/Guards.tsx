@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { useAuth } from "../../entities/session/model/Auth-context";
+import './LoginModal.css'
 
 export function RequireAuth() {
     const { status, openLogin } = useAuth();

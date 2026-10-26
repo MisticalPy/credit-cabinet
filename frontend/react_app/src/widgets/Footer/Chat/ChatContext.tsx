@@ -7,14 +7,13 @@ import {
     useRef,
     type ReactNode,
 } from 'react';
-import { sendChat } from './ChatService';
+import { streamReply } from './ChatService';
 
 export type Message = {
     id: string;
     role: 'user' | 'assistant';
     text: string;
     status?: 'streaming' | 'done';
-    error?: boolean;
 };
 
 type ChatContextValue = {
@@ -40,12 +39,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
         streamingRef.current = true;
         const assistantId = crypto.randomUUID();
-        const history = [
-            ...messages
-                .filter((m) => m.text && !m.error)
-                .map((m) => ({ role: m.role, content: m.text })),
-            { role: 'user' as const, content: text },
-        ];
 
         setMessages((prev) => [
             ...prev,
@@ -59,17 +52,17 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             setMessages((prev) => prev.map((m) => (m.id === assistantId ? fn(m) : m)));
 
         try {
-            const reply = await sendChat(history);
-            patch((m) => ({ ...m, text: reply }));
-        } catch (e) {
-            const text = e instanceof Error ? e.message : 'Не удалось получить ответ.';
-            patch((m) => ({ ...m, text, error: true }));
+            for await (const chunk of streamReply(text)) {
+                patch((m) => ({ ...m, text: m.text + chunk }));
+            }
+        } catch {
+            patch((m) => ({ ...m, text: m.text || 'Не удалось получить ответ.' }));
         } finally {
             patch((m) => ({ ...m, status: 'done' }));
             streamingRef.current = false;
             setIsStreaming(false);
         }
-    }, [input, messages]);
+    }, [input, isStreaming]);
 
     const value = useMemo(
         () => ({ messages, input, setInput, isStreaming, send }),
@@ -84,3 +77,4 @@ export function useChat() {
     if (!ctx) throw new Error('useChat must be used inside <ChatProvider>');
     return ctx;
 }
+

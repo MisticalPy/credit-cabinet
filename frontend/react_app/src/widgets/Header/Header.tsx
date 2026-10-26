@@ -1,8 +1,11 @@
 // @ts-ignore
 import React from 'react';
 import './Header.css'
+import {useAuth} from "../../entities/session/model/Auth-context.ts";
 
 function Header(){
+    const { openLogin, status } = useAuth();
+
     return (
         <>
             <div className={"Header"}>
@@ -27,16 +30,26 @@ function Header(){
                         <a className={"SmartSearchLink"}></a>
                     </div>
                     <div className={"headerRightButtons"}>
-                        <div className={"headerRightButtonsL"}>
-                            <a className={"willClient"} href="/">
-                                <span className={"willClientText"}>Стать клиентом</span>
-                            </a>
-                        </div>
-                        <div className={"headerRightButtonsR"}>
-                            <a className={"inCabinet"} href="/">
-                                <span className={"inCabinetText"}>Войти</span>
-                            </a>
-                        </div>
+                        {status === 'ready' ? (
+                            <div className={"headerRightButtonsR"}>
+                                <a className={"inCabinet"} href="/" onClick={(e) => { e.preventDefault(); openLogin(); }}>
+                                    <span className={"inCabinetText"}>Профиль</span>
+                                </a>
+                            </div>
+                        ) : (
+                            <>
+                                <div className={"headerRightButtonsL"}>
+                                    <a className={"willClient"} href="https://alfabank.ru/lp/retail/startclient/">
+                                        <span className={"willClientText"}>Стать клиентом</span>
+                                    </a>
+                                </div>
+                                <div className="headerRightButtonsR" role="button" tabIndex={0}>
+                                    <a className={"inCabinet"} href="/" onClick={(e) => { e.preventDefault(); openLogin(); }}>
+                                        <span className={"inCabinetText"}>Войти</span>
+                                    </a>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
