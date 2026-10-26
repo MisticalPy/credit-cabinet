@@ -1,0 +1,1338 @@
+{
+  "components": {
+    "schemas": {
+      "ApplicationDetailOut": {
+        "properties": {
+          "amount": {
+            "title": "Amount",
+            "type": "string"
+          },
+          "comment": {
+            "title": "Comment",
+            "type": "string"
+          },
+          "counter_amount": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Counter Amount"
+          },
+          "counter_term_months": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Counter Term Months"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/HistoryOut"
+            },
+            "title": "History",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "manager_comment": {
+            "title": "Manager Comment",
+            "type": "string"
+          },
+          "monthly_payment": {
+            "title": "Monthly Payment",
+            "type": "string"
+          },
+          "product_id": {
+            "title": "Product Id",
+            "type": "integer"
+          },
+          "product_name": {
+            "title": "Product Name",
+            "type": "string"
+          },
+          "rate": {
+            "title": "Rate",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/Status"
+          },
+          "term_months": {
+            "title": "Term Months",
+            "type": "integer"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "product_id",
+          "product_name",
+          "amount",
+          "term_months",
+          "rate",
+          "monthly_payment",
+          "comment",
+          "status",
+          "manager_comment",
+          "counter_amount",
+          "counter_term_months",
+          "created_at",
+          "updated_at",
+          "history"
+        ],
+        "title": "ApplicationDetailOut",
+        "type": "object"
+      },
+      "ApplicationIn": {
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Amount"
+          },
+          "comment": {
+            "default": "",
+            "maxLength": 1000,
+            "title": "Comment",
+            "type": "string"
+          },
+          "product_id": {
+            "title": "Product Id",
+            "type": "integer"
+          },
+          "term_months": {
+            "maximum": 360,
+            "minimum": 1,
+            "title": "Term Months",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "product_id",
+          "amount",
+          "term_months"
+        ],
+        "title": "ApplicationIn",
+        "type": "object"
+      },
+      "ApplicationOut": {
+        "properties": {
+          "amount": {
+            "title": "Amount",
+            "type": "string"
+          },
+          "comment": {
+            "title": "Comment",
+            "type": "string"
+          },
+          "counter_amount": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Counter Amount"
+          },
+          "counter_term_months": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Counter Term Months"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "manager_comment": {
+            "title": "Manager Comment",
+            "type": "string"
+          },
+          "monthly_payment": {
+            "title": "Monthly Payment",
+            "type": "string"
+          },
+          "product_id": {
+            "title": "Product Id",
+            "type": "integer"
+          },
+          "product_name": {
+            "title": "Product Name",
+            "type": "string"
+          },
+          "rate": {
+            "title": "Rate",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/Status"
+          },
+          "term_months": {
+            "title": "Term Months",
+            "type": "integer"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "product_id",
+          "product_name",
+          "amount",
+          "term_months",
+          "rate",
+          "monthly_payment",
+          "comment",
+          "status",
+          "manager_comment",
+          "counter_amount",
+          "counter_term_months",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "ApplicationOut",
+        "type": "object"
+      },
+      "BusinessType": {
+        "enum": [
+          "ip",
+          "ooo"
+        ],
+        "title": "BusinessType",
+        "type": "string"
+      },
+      "CalculationQuery": {
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Amount"
+          },
+          "term": {
+            "maximum": 360,
+            "minimum": 1,
+            "title": "Term",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "amount",
+          "term"
+        ],
+        "title": "CalculationQuery",
+        "type": "object"
+      },
+      "ChatIn": {
+        "properties": {
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/MessageIn"
+            },
+            "maxItems": 50,
+            "minItems": 1,
+            "title": "Messages",
+            "type": "array"
+          }
+        },
+        "required": [
+          "messages"
+        ],
+        "title": "ChatIn",
+        "type": "object"
+      },
+      "ChatOut": {
+        "properties": {
+          "reply": {
+            "title": "Reply",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reply"
+        ],
+        "title": "ChatOut",
+        "type": "object"
+      },
+      "Collateral": {
+        "enum": [
+          "none",
+          "property",
+          "guarantee"
+        ],
+        "title": "Collateral",
+        "type": "string"
+      },
+      "CredentialsIn": {
+        "properties": {
+          "password": {
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Password",
+            "type": "string"
+          },
+          "username": {
+            "maxLength": 150,
+            "minLength": 3,
+            "pattern": "^[\\w.@+-]+$",
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "CredentialsIn",
+        "type": "object"
+      },
+      "HistoryOut": {
+        "properties": {
+          "comment": {
+            "title": "Comment",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "from_status": {
+            "title": "From Status",
+            "type": "string"
+          },
+          "to_status": {
+            "$ref": "#/components/schemas/Status"
+          }
+        },
+        "required": [
+          "from_status",
+          "to_status",
+          "comment",
+          "created_at"
+        ],
+        "title": "HistoryOut",
+        "type": "object"
+      },
+      "Industry": {
+        "enum": [
+          "trade",
+          "food",
+          "services",
+          "manufacturing",
+          "construction",
+          "transport",
+          "it",
+          "other"
+        ],
+        "title": "Industry",
+        "type": "string"
+      },
+      "MatchOut": {
+        "properties": {
+          "payment": {
+            "$ref": "#/components/schemas/PaymentOut"
+          },
+          "product": {
+            "$ref": "#/components/schemas/ProductOut"
+          }
+        },
+        "required": [
+          "product",
+          "payment"
+        ],
+        "title": "MatchOut",
+        "type": "object"
+      },
+      "MatchQuery": {
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Amount"
+          },
+          "collateral": {
+            "allOf": [
+              {
+                "enum": [
+                  "none",
+                  "property",
+                  "guarantee"
+                ],
+                "title": "Collateral",
+                "type": "string"
+              }
+            ],
+            "default": "none"
+          },
+          "purpose": {
+            "$ref": "#/components/schemas/Purpose"
+          },
+          "term": {
+            "maximum": 360,
+            "minimum": 1,
+            "title": "Term",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "amount",
+          "term",
+          "purpose"
+        ],
+        "title": "MatchQuery",
+        "type": "object"
+      },
+      "MessageIn": {
+        "properties": {
+          "content": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Content",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "user",
+              "assistant"
+            ],
+            "title": "Role",
+            "type": "string"
+          }
+        },
+        "required": [
+          "role",
+          "content"
+        ],
+        "title": "MessageIn",
+        "type": "object"
+      },
+      "PaymentOut": {
+        "properties": {
+          "monthly_payment": {
+            "title": "Monthly Payment",
+            "type": "string"
+          },
+          "overpayment": {
+            "title": "Overpayment",
+            "type": "string"
+          },
+          "total": {
+            "title": "Total",
+            "type": "string"
+          }
+        },
+        "required": [
+          "monthly_payment",
+          "total",
+          "overpayment"
+        ],
+        "title": "PaymentOut",
+        "type": "object"
+      },
+      "ProductOut": {
+        "properties": {
+          "collateral_type": {
+            "maxLength": 10,
+            "title": "Обеспечение",
+            "type": "string"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Описание"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "ID"
+          },
+          "legal_form": {
+            "maxLength": 3,
+            "title": "Форма Бизнеса",
+            "type": "string"
+          },
+          "max_amount": {
+            "title": "Сумма До, ₽",
+            "type": "string"
+          },
+          "max_term_months": {
+            "title": "Срок До, Мес.",
+            "type": "integer"
+          },
+          "min_amount": {
+            "title": "Сумма От, ₽",
+            "type": "string"
+          },
+          "min_business_age_months": {
+            "default": 0,
+            "title": "Мин. Возраст Бизнеса, Мес.",
+            "type": "integer"
+          },
+          "min_monthly_revenue": {
+            "default": 0,
+            "title": "Мин. Оборот В Месяц, ₽",
+            "type": "string"
+          },
+          "min_term_months": {
+            "title": "Срок От, Мес.",
+            "type": "integer"
+          },
+          "name": {
+            "maxLength": 255,
+            "title": "Название",
+            "type": "string"
+          },
+          "purpose": {
+            "maxLength": 20,
+            "title": "Цель",
+            "type": "string"
+          },
+          "rate": {
+            "title": "Ставка, % Годовых",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "purpose",
+          "legal_form",
+          "collateral_type",
+          "min_amount",
+          "max_amount",
+          "min_term_months",
+          "max_term_months",
+          "rate"
+        ],
+        "title": "ProductOut",
+        "type": "object"
+      },
+      "ProfileIn": {
+        "properties": {
+          "business_type": {
+            "$ref": "#/components/schemas/BusinessType"
+          },
+          "company_name": {
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Company Name",
+            "type": "string"
+          },
+          "industry": {
+            "$ref": "#/components/schemas/Industry"
+          },
+          "inn": {
+            "pattern": "^\\d{10}(\\d{2})?$",
+            "title": "Inn",
+            "type": "string"
+          },
+          "monthly_revenue": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Monthly Revenue"
+          },
+          "registration_date": {
+            "format": "date",
+            "title": "Registration Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "business_type",
+          "company_name",
+          "inn",
+          "industry",
+          "monthly_revenue",
+          "registration_date"
+        ],
+        "title": "ProfileIn",
+        "type": "object"
+      },
+      "ProfileOut": {
+        "properties": {
+          "business_age_months": {
+            "title": "Business Age Months",
+            "type": "integer"
+          },
+          "business_type": {
+            "maxLength": 3,
+            "title": "Форма Бизнеса",
+            "type": "string"
+          },
+          "company_name": {
+            "maxLength": 255,
+            "title": "Название",
+            "type": "string"
+          },
+          "industry": {
+            "maxLength": 20,
+            "title": "Отрасль",
+            "type": "string"
+          },
+          "inn": {
+            "maxLength": 12,
+            "title": "ИНН",
+            "type": "string"
+          },
+          "monthly_revenue": {
+            "title": "Оборот В Месяц, ₽",
+            "type": "string"
+          },
+          "registration_date": {
+            "format": "date",
+            "title": "Дата Регистрации",
+            "type": "string"
+          }
+        },
+        "required": [
+          "business_age_months",
+          "business_type",
+          "company_name",
+          "inn",
+          "industry",
+          "monthly_revenue",
+          "registration_date"
+        ],
+        "title": "ProfileOut",
+        "type": "object"
+      },
+      "Purpose": {
+        "enum": [
+          "working_capital",
+          "equipment",
+          "development",
+          "refinancing"
+        ],
+        "title": "Purpose",
+        "type": "string"
+      },
+      "Status": {
+        "enum": [
+          "draft",
+          "submitted",
+          "scoring",
+          "review",
+          "approved",
+          "rejected",
+          "counter_offer",
+          "info_requested"
+        ],
+        "title": "Status",
+        "type": "string"
+      },
+      "UserOut": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "ID"
+          },
+          "role": {
+            "default": "client",
+            "maxLength": 20,
+            "title": "Роль",
+            "type": "string"
+          },
+          "username": {
+            "description": "Обязательное поле. Не более 150 символов. Только буквы, цифры и символы @/./+/-/_.",
+            "maxLength": 150,
+            "title": "Имя Пользователя",
+            "type": "string"
+          }
+        },
+        "required": [
+          "username"
+        ],
+        "title": "UserOut",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "SessionAuth": {
+        "in": "cookie",
+        "name": "sessionid",
+        "type": "apiKey"
+      }
+    }
+  },
+  "info": {
+    "description": "",
+    "title": "Умный кредитный кабинет",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/applications": {
+      "get": {
+        "operationId": "apps_applications_api_list_applications",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "List Applications",
+        "tags": [
+          "applications"
+        ]
+      },
+      "post": {
+        "operationId": "apps_applications_api_create_application",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationOut"
+                }
+              }
+            },
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Create Application",
+        "tags": [
+          "applications"
+        ]
+      }
+    },
+    "/api/applications/{application_id}": {
+      "get": {
+        "operationId": "apps_applications_api_get_application",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "application_id",
+            "required": true,
+            "schema": {
+              "title": "Application Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationDetailOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Get Application",
+        "tags": [
+          "applications"
+        ]
+      }
+    },
+    "/api/applications/{application_id}/accept-offer": {
+      "post": {
+        "operationId": "apps_applications_api_accept_offer",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "application_id",
+            "required": true,
+            "schema": {
+              "title": "Application Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationDetailOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Accept Offer",
+        "tags": [
+          "applications"
+        ]
+      }
+    },
+    "/api/applications/{application_id}/submit": {
+      "post": {
+        "operationId": "apps_applications_api_submit_application",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "application_id",
+            "required": true,
+            "schema": {
+              "title": "Application Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationDetailOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Submit Application",
+        "tags": [
+          "applications"
+        ]
+      }
+    },
+    "/api/assistant/chat": {
+      "post": {
+        "operationId": "apps_assistant_api_chat",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Chat",
+        "tags": [
+          "assistant"
+        ]
+      }
+    },
+    "/api/auth/csrf": {
+      "get": {
+        "operationId": "apps_users_api_csrf",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "summary": "Csrf",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "operationId": "apps_users_api_login",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CredentialsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Login",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "operationId": "apps_users_api_logout",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Logout",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "operationId": "apps_users_api_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Me",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "operationId": "apps_users_api_register",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CredentialsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOut"
+                }
+              }
+            },
+            "description": "Created"
+          }
+        },
+        "summary": "Register",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/products": {
+      "get": {
+        "operationId": "apps_products_api_list_products",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ProductOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "List Products",
+        "tags": [
+          "products"
+        ]
+      }
+    },
+    "/api/products/match": {
+      "get": {
+        "operationId": "apps_products_api_match",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "amount",
+            "required": true,
+            "schema": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0.0,
+                  "type": "number"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "title": "Amount"
+            }
+          },
+          {
+            "in": "query",
+            "name": "term",
+            "required": true,
+            "schema": {
+              "maximum": 360,
+              "minimum": 1,
+              "title": "Term",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "purpose",
+            "required": true,
+            "schema": {
+              "enum": [
+                "working_capital",
+                "equipment",
+                "development",
+                "refinancing"
+              ],
+              "title": "Purpose",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "collateral",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "enum": [
+                    "none",
+                    "property",
+                    "guarantee"
+                  ],
+                  "title": "Collateral",
+                  "type": "string"
+                }
+              ],
+              "default": "none"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MatchOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Match",
+        "tags": [
+          "products"
+        ]
+      }
+    },
+    "/api/products/{product_id}/calculate": {
+      "get": {
+        "operationId": "apps_products_api_calculate",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "required": true,
+            "schema": {
+              "title": "Product Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "amount",
+            "required": true,
+            "schema": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0.0,
+                  "type": "number"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "title": "Amount"
+            }
+          },
+          {
+            "in": "query",
+            "name": "term",
+            "required": true,
+            "schema": {
+              "maximum": 360,
+              "minimum": 1,
+              "title": "Term",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Calculate",
+        "tags": [
+          "products"
+        ]
+      }
+    },
+    "/api/profile": {
+      "get": {
+        "operationId": "apps_users_api_get_my_profile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileOut"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Get My Profile",
+        "tags": [
+          "profile"
+        ]
+      },
+      "put": {
+        "operationId": "apps_users_api_put_my_profile",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileOut"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileOut"
+                }
+              }
+            },
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ],
+        "summary": "Put My Profile",
+        "tags": [
+          "profile"
+        ]
+      }
+    }
+  },
+  "servers": []
+}

@@ -1,0 +1,111 @@
+# Коллекция запросов: путь клиента от регистрации до принятия встречного предложения.
+# Работает в REST Client (VS Code) и в HTTP Client (JetBrains). Запускать сверху вниз.
+#
+# Как устроена защита CSRF (сессия + cookie):
+#   1. GET /api/auth/csrf отдаёт cookie csrftoken (в ответе заголовок Set-Cookie).
+#   2. Значение токена нужно вручную скопировать в переменную @csrftoken ниже.
+#   3. Для POST/PUT запросов обязательны заголовки X-CSRFToken и Origin.
+#   4. После register и login Django выдаёт новый токен: снова вызовите GET /api/auth/csrf
+#      и обновите @csrftoken. Cookie сессии клиент хранит сам.
+# Origin должен совпадать с адресом, с которого идут запросы (CSRF_TRUSTED_ORIGINS в .env).
+
+@host = http://localhost:8080
+@origin = http://localhost:8080
+# Вставьте сюда значение cookie csrftoken из ответа на запрос «CSRF-токен»
+@csrftoken = PASTE_TOKEN_HERE
+
+# Для проверки сценария заявки «встречное предложение» можно войти демо-клиентом
+# (client_counter / AlfaDemo2026) вместо регистрации нового пользователя.
+
+### 1. CSRF-токен: ответ 204, токен в Set-Cookie: csrftoken=...
+GET {{host}}/api/auth/csrf
+
+### 2. Регистрация нового клиента (сразу выполняет вход).
+# Слабый пароль (например, только цифры) вернёт 400 с пояснением.
+POST {{host}}/api/auth/register
+Content-Type: application/json
+X-CSRFToken: {{csrftoken}}
+Origin: {{origin}}
+
+{
+  "username": "demo_ip",
+  "password": "Kofe-2026-xyz"
+}
+
+### 3. Вход (если пользователь уже есть). После входа обновите @csrftoken (запрос 1).
+POST {{host}}/api/auth/login
+Content-Type: application/json
+X-CSRFToken: {{csrftoken}}
+Origin: {{origin}}
+
+{
+  "username": "client_counter",
+  "password": "AlfaDemo2026"
+}
+
+### 4. Кто я: проверка сессии
+GET {{host}}/api/auth/me
+
+### 5. Профиль бизнеса (создание или обновление).
+# ИНН: 12 цифр для ИП ("ip"), 10 для ООО ("ooo").
+# Последняя цифра ИНН влияет на моки: 0 - ликвидирована, 7/8/9 - просрочки в БКИ.
+PUT {{host}}/api/profile
+Content-Type: application/json
+X-CSRFToken: {{csrftoken}}
+Origin: {{origin}}
+
+{
+  "business_type": "ip",
+  "company_name": "ИП Демо",
+  "inn": "770123456781",
+  "industry": "services",
+  "monthly_revenue": "500000",
+  "registration_date": "2023-05-10"
+}
+
+### 6. Каталог продуктов (без входа)
+GET {{host}}/api/products
+
+### 7. Подбор продуктов под профиль (нужен вход и заполненный профиль).
+# purpose: working_capital | equipment | development | refinancing
+# collateral (необязательно): none | property | guarantee
+GET {{host}}/api/products/match?purpose=working_capital&amount=500000&term=12&collateral=none
+
+### 8. Калькулятор платежа по продукту 1 (без входа)
+GET {{host}}/api/products/1/calculate?amount=500000&term=12
+
+### 9. Создание заявки (черновик). Сумма и срок должны укладываться в условия продукта.
+POST {{host}}/api/applications
+Content-Type: application/json
+X-CSRFToken: {{csrftoken}}
+Origin: {{origin}}
+
+{
+  "product_id": 1,
+  "amount": "500000",
+  "term_months": 12,
+  "comment": "Закупка товара"
+}
+
+### 10. Список моих заявок
+GET {{host}}/api/applications
+
+### 11. Отправка заявки: автоскоринг и перевод на рассмотрение менеджеру.
+# Подставьте id из ответа на запрос 9.
+POST {{host}}/api/applications/1/submit
+X-CSRFToken: {{csrftoken}}
+Origin: {{origin}}
+
+### 12. Заявка с историей статусов, баллами и решением менеджера
+GET {{host}}/api/applications/1
+
+### 13. Принять встречное предложение. Доступно, когда менеджер выбрал в админке
+# решение «Встречное предложение» (статус counter_offer); иначе вернётся 400.
+POST {{host}}/api/applications/1/accept-offer
+X-CSRFToken: {{csrftoken}}
+Origin: {{origin}}
+
+### 14. Выход
+POST {{host}}/api/auth/logout
+X-CSRFToken: {{csrftoken}}
+Origin: {{origin}}

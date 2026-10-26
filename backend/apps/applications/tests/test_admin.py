@@ -37,6 +37,14 @@ def admin_client() -> Client:
     return client
 
 
+@pytest.fixture
+def manager_client() -> Client:
+    manager = users_services.ensure_manager(username="mgr", password="Kofe-2026-xyz")
+    client = Client()
+    client.force_login(manager)
+    return client
+
+
 def _post_decision(client: Client, application: LoanApplication, **data):
     """POST решения менеджера на страницу изменения заявки (как из браузера)."""
     url = reverse("admin:applications_loanapplication_change", args=[application.pk])
@@ -102,3 +110,12 @@ def test_counter_offer_out_of_product_limits_changes_nothing(admin_client, revie
     assert review_application.counter_term_months is None
     messages = _messages(response)
     assert messages and not any("успешно" in m for m in messages)
+
+
+def test_manager_sees_status_history_inline(manager_client, review_application):
+    url = reverse("admin:applications_loanapplication_change", args=[review_application.pk])
+
+    response = manager_client.get(url)
+
+    assert response.status_code == 200
+    assert "history-TOTAL_FORMS" in response.content.decode()
