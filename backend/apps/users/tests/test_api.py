@@ -1,8 +1,47 @@
 import pytest
 
 from apps.users.models import User
+from conftest import ApiClient
 
 pytestmark = pytest.mark.django_db
+
+
+def test_csrf_sets_cookie(api_client):
+    response = api_client.get("/api/auth/csrf")
+
+    assert response.status_code == 204
+    assert "csrftoken" in response.cookies
+
+
+def test_login_then_me_then_logout(make_client):
+    make_client("alex")
+    client = ApiClient()
+
+    login = client.post("/api/auth/login", {"username": "alex", "password": "Kofe-2026-xyz"})
+    assert login.status_code == 200
+
+    me = client.get("/api/auth/me")
+    assert me.status_code == 200
+    assert me.json()["username"] == "alex"
+
+    assert client.post("/api/auth/logout").status_code == 204
+    assert client.get("/api/auth/me").status_code == 401
+
+
+def test_login_with_csrf_enforced(make_client):
+    make_client("alex")
+    client = ApiClient(enforce_csrf_checks=True)
+
+    client.get("/api/auth/csrf")
+    token = client.cookies["csrftoken"].value
+
+    login = client.post(
+        "/api/auth/login",
+        {"username": "alex", "password": "Kofe-2026-xyz"},
+        HTTP_X_CSRFTOKEN=token,
+    )
+    assert login.status_code == 200
+    assert client.get("/api/auth/me").status_code == 200
 
 
 def test_register_ignores_role_and_lowercases_username(api_client):

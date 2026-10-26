@@ -1,5 +1,5 @@
 from django.contrib import auth
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.middleware.csrf import get_token
 from ninja import Router, Status
 from ninja.errors import HttpError
 
@@ -11,8 +11,9 @@ profile_router = Router(tags=["profile"])
 
 
 @router.get("/csrf", response={204: None}, auth=None)
-@ensure_csrf_cookie
 def csrf(request):
+    # get_token помечает запрос, и CsrfViewMiddleware сам поставит cookie
+    get_token(request)
     return Status(204, None)
 
 
