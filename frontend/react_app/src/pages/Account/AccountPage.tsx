@@ -1,10 +1,9 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useAuth } from "../../entities/session/model/Auth-context";
+import { ApiError } from "../../shared/api/client";
+import { profile } from "../../shared/api/endpoints";
+import type { BusinessType, Industry } from "../../shared/api/types";
 import "./AccountPage.css";
-
-const ACCOUNT_URL = "/api/profile";
-
-const csrf = () => document.cookie.match(/csrftoken=([^;]+)/)?.[1] ?? "";
 
 interface BusinessForm {
     company_name: string;
@@ -27,13 +26,20 @@ const EMPTY: BusinessForm = {
 };
 
 // code sent to the backend -> label shown to the user.
-// TODO: add the remaining values from the PUT /api/profile schema (Swagger).
 const BUSINESS_TYPES: Record<string, string> = {
     ip: "ИП",
+    ooo: "ООО",
 };
 
 const INDUSTRIES: Record<string, string> = {
     trade: "Торговля",
+    food: "Общепит",
+    services: "Услуги",
+    manufacturing: "Производство",
+    construction: "Строительство",
+    transport: "Транспорт",
+    it: "IT",
+    other: "Другое",
 };
 
 interface FieldProps {
@@ -118,12 +124,10 @@ export default function AccountPage() {
         let cancelled = false;
         (async () => {
             try {
-                const res = await fetch(ACCOUNT_URL, { credentials: "include" });
-                if (!res.ok) return;
-                const json = await res.json();
-                if (!cancelled) setForm(fromJson(json));
+                const data = await profile.get();
+                if (!cancelled) setForm(fromJson({ ...data }));
             } catch {
-                /* empty form is fine */
+                /* 404 (профиль не заполнен) и прочее: пустая форма */
             }
         })();
         return () => {
@@ -136,26 +140,20 @@ export default function AccountPage() {
         setSaving(true);
         setMessage(null);
         try {
-            const res = await fetch(ACCOUNT_URL, {
-                method: "PUT",
-                credentials: "include",
-                headers: { "Content-Type": "application/json", "X-CSRFToken": csrf() },
-                body: JSON.stringify({
-                    company_name: form.company_name,
-                    inn: form.inn,
-                    business_type: form.business_type,
-                    industry: form.industry,
-                    registration_date: form.registration_date,
-                    monthly_revenue: Number(form.monthly_revenue) || 0,
-                }),
+            const saved = await profile.save({
+                company_name: form.company_name,
+                inn: form.inn,
+                business_type: form.business_type as BusinessType,
+                industry: form.industry as Industry,
+                registration_date: form.registration_date,
+                monthly_revenue: form.monthly_revenue || "0",
             });
-            if (!res.ok) throw new Error(String(res.status));
             // Backend returns the saved profile, including the calculated age.
-            setForm(fromJson(await res.json()));
+            setForm(fromJson({ ...saved }));
             setMessage({ ok: true, text: "Данные сохранены" });
         } catch (err) {
-            const code = err instanceof Error && /^\d+$/.test(err.message) ? ` (${err.message})` : "";
-            setMessage({ ok: false, text: `Не удалось сохранить${code}. Попробуйте ещё раз.` });
+            const text = err instanceof ApiError ? err.message : "Не удалось сохранить. Попробуйте ещё раз.";
+            setMessage({ ok: false, text });
         } finally {
             setSaving(false);
         }
