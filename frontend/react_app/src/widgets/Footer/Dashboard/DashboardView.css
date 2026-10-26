@@ -1,0 +1,358 @@
+.dash {
+    --d-red: #ef3124;
+    --d-text: #1f1f1f;
+    --d-muted: #757575;
+    --d-panel: #f2f3f5;
+    --d-field: #e3e4e8;
+    --d-line: #c9cacf;
+    --d-principal: #ef3124;
+    --d-interest: #dddfe4;
+
+    width: 100%;
+    height: 688px;
+    box-sizing: border-box;
+    color: var(--d-text);
+    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+
+.dash .ChatGreeting {
+    margin: 0 0 24px;
+    text-align: center;
+}
+
+
+
+/* ---------- calculator container ---------- */
+
+.dash-calc {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-radius: 32px;
+    background: var(--d-panel);
+    height: 688px;
+}
+
+.dash-controls {
+    order: 2; /* sliders go below the chart */
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 10px;
+}
+
+.dash-result {
+    order: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 14px 14px 12px;
+    border-radius: 26px;
+    background: #fff;
+    min-width: 0;
+}
+
+/* ---------- fields ---------- */
+
+.dash-field__box {
+    display: flex;
+    flex-direction: column;
+    border-radius: 6px 6px 0 0;
+    margin-right: 15px;
+    margin-left: 15px;
+    margin-bottom: 4px;
+    margin-top: 15px;
+    background: var(--d-field);
+    overflow: hidden;
+}
+
+.dash-field__label {
+    color: var(--d-muted);
+    font-size: 12px;
+    padding-left: 10px;
+    padding-top: 5px;
+}
+
+.dash-field__value {
+    padding: 2px 12px 10px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.dash-field__marks {
+    display: none; /* added */
+    /*display: flex;*/
+    justify-content: space-between;
+    margin-top: 2px;
+    color: var(--d-muted);
+    font-size: 12px;
+    padding: 2px 12px 10px;
+
+}
+
+.dash-controls__note {
+    grid-column: 1 / -1;
+    margin: 4px 0 0;
+    color: var(--d-muted);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* ---------- range ---------- */
+
+.dash-range {
+    --p: 0%; /* default; overridden inline from DashboardView.tsx */
+    -webkit-appearance: none;
+    appearance: none;
+    display: block;
+    width: 100%;
+    height: 16px;
+    margin: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.dash-range::-webkit-slider-runnable-track {
+    height: 1px;
+    background: linear-gradient(to right, var(--d-text) var(--p), var(--d-line) var(--p));
+}
+
+.dash-range::-moz-range-track {
+    height: 1px;
+    background: var(--d-line);
+}
+
+.dash-range::-moz-range-progress {
+    height: 1px;
+    background: var(--d-text);
+}
+
+.dash-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    margin-top: -8px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--d-red);
+}
+
+.dash-range::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--d-red);
+}
+
+.dash-range:focus-visible {
+    outline: 2px solid var(--d-red);
+    outline-offset: 2px;
+}
+
+/* ---------- stats ---------- */
+
+.dash-stats {
+    display: grid;
+    grid-template-columns: 1.6fr repeat(3, 1fr);
+    gap: 16px;
+    align-items: start;
+}
+
+.dash-stats__label {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--d-muted);
+    font-size: 13px;
+}
+
+.dash-stats__item b {
+    font-size: 16px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.dash-stats__payment {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.dash-stats__payment b {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+
+.dash-badge {
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #e6f6ec;
+    color: #1b7a43;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.dash-saving {
+    margin: 0;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: var(--d-panel);
+    font-size: 14px;
+}
+
+/* ---------- legend ---------- */
+
+.dash-legend {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    color: var(--d-muted);
+}
+
+.dash-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 6px;
+    border-radius: 3px;
+    vertical-align: -1px;
+}
+
+.dash-dot--principal {
+    background: var(--d-principal);
+}
+
+.dash-dot--interest {
+    background: var(--d-interest);
+}
+
+/* ---------- chart ---------- */
+
+.dash-chart {
+    display: flex;
+    gap: 12px;
+}
+
+.dash-chart__y {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 260px;
+    min-width: 56px;
+    color: var(--d-muted);
+    font-size: 12px;
+    text-align: right;
+    transform: translateY(-6px);
+    padding-bottom: 0;
+}
+
+.dash-chart__main {
+    flex: 1;
+    min-width: 0;
+}
+
+.dash-chart__plot {
+    position: relative;
+    height: 260px;
+}
+
+.dash-chart__grid {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #ececef;
+}
+
+.dash-chart__bars {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.dash-bar {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.dash-bar__seg {
+    width: 100%;
+    transition: height 0.25s ease;
+}
+
+.dash-bar__seg--interest {
+    background: var(--d-interest);
+    border-radius: 3px 3px 0 0;
+}
+
+.dash-bar__seg--principal {
+    background: var(--d-principal);
+}
+
+.dash-bar__seg--interest + .dash-bar__seg--principal {
+    border-radius: 0;
+}
+
+.dash-chart__x {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px;
+}
+
+.dash-chart__x span {
+    flex: 1;
+    min-width: 0;
+    color: var(--d-muted);
+    font-size: 12px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+}
+
+/* ---------- slot for LoanCatalog ---------- */
+
+.dash-slot {
+    margin-top: 32px;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 700px) {
+    .dash-controls {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 1100px) {
+    .dash-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .dash-stats__main {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 520px) {
+    .dash {
+        padding: 16px 12px;
+    }
+
+    .dash-result {
+        padding: 20px 16px;
+    }
+
+    .dash-chart__x span {
+        font-size: 10px;
+    }
+}

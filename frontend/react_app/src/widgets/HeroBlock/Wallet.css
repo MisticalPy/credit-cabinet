@@ -1,0 +1,84 @@
+.wallet-scene {
+    position: relative;
+    left: 700px;
+    top: 170px;
+    width: 360px;
+    height: 480px;
+    margin-bottom: -480px;
+    perspective: 800px;
+}
+
+.wallet-back {
+    position: absolute;
+    left: 52px;
+    top: 3px;
+    width: 360px;
+    height: 335px;
+    object-fit: contain;
+}
+
+
+.wallet-front {
+    position: absolute;
+    left: 10px;
+    top: -2px;
+    width: 360px;
+    height: 340px;
+    object-fit: contain;
+}
+
+.wallet-back {
+    z-index: 1;
+}
+
+.wallet-front {
+    z-index: 3;
+}
+
+.coin {
+    position: absolute;
+    bottom: 300px;
+    width: 150px;
+    height: 100px;
+    z-index: 2;
+    cursor: pointer;
+    animation: coin-pop 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    transition: transform 0s;
+}
+
+.coin:hover {
+    transform: rotateY(360deg);
+    transition: transform 0.8s ease-in-out;
+}
+
+.coin-2 {
+
+    left: 230px;
+    rotate: 9deg;
+    animation-delay: 0.7s;
+    bottom: 301px;
+}
+
+.coin-1 {
+    left: 135px;
+    rotate: 5deg;
+    animation-delay: 0.55s;
+}
+
+@keyframes coin-pop {
+    from {
+        translate: 0 0;
+    }
+    to {
+        translate: 0 -130px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .coin {
+        animation-duration: 0.01s;
+    }
+    .coin:hover {
+        transition-duration: 0.01s;
+    }
+}

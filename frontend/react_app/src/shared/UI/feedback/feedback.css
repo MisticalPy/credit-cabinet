@@ -1,0 +1,113 @@
+:root {
+    --red: #ef3124;
+    --bg-light: #ffffff;
+    --feedback-bg: var(--red);
+    --feedback-bg-hover: #d82a1e;
+}
+
+.feedback_img {
+    height: 30px;
+    width: 30px;
+}
+.feedbackRightDown {
+    position: fixed;
+    right: 16px;
+    bottom: 48px;
+    z-index: 100;
+}
+
+.feedbackButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    background-color: var(--feedback-bg);
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.feedbackButton:hover {
+    background-color: var(--feedback-bg-hover);
+}
+
+.feedbackButton:active {
+    transform: scale(0.95);
+}
+
+.feedbackButton svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--bg-light);
+}
+
+.feedbackOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.35);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+}
+
+.feedbackModal {
+    position: absolute;
+    right: 24px;
+    bottom: 24px;
+    width: 340px;
+    max-width: calc(100vw - 32px);
+    box-sizing: border-box;
+    padding: 56px 32px 32px;
+    background: #fff;
+    border: 1px solid #ef3124;
+    border-radius: 32px;
+    text-align: center;
+    color: #141414;
+}
+
+.feedbackModal__close {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    padding: 4px;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.feedbackModal__title {
+    margin-bottom: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.feedbackModal__text {
+    margin-bottom: 20px;
+    font-size: 16px;
+    line-height: 1.3;
+}
+
+.feedbackModal__hearts {
+    display: flex;
+    justify-content: center;
+    gap: 22px;
+}
+
+.feedbackModal__heart {
+    font-size: 44px;
+    line-height: 1;
+    color: #b9b9c6;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.15s, transform 0.15s;
+}
+
+.feedbackModal__heart:hover {
+    transform: scale(1.1);
+}
+
+.feedbackModal__heart.is-active {
+    color: #ef3124;
+}

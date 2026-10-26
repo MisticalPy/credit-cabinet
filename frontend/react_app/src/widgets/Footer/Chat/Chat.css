@@ -1,0 +1,172 @@
+:root {
+    --accent: #ef3b24;
+    --accent-hover: #d9301b;
+    --bubble-bg: #f1f1f1;
+    --text: #111;
+    --placeholder: #8a8a8a;
+}
+
+
+.ChatPanel {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    width: 100%;
+    height: 688px;
+    min-width: 0;
+    padding: 5px 10px 10px;
+    box-sizing: border-box;
+    border-radius: 28px;
+    background: var(--bg-light);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.ChatMessages {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 12px;
+    width: 100%;
+    min-height: 0;
+    padding-bottom: 14px;
+
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.ChatMessage {
+    max-width: 75%;
+    padding: 8px 16px;
+    border-radius: 16px;
+    font-size: 16px;
+    line-height: 1.4;
+    color: var(--text);
+    white-space: pre-wrap;
+}
+
+
+/* Pins messages to the bottom without breaking scroll */
+.ChatMessages > :first-child {
+    margin-top: auto;
+}
+
+.ChatMessages > .ChatGreeting {
+    margin: auto;
+    text-align: center;
+}
+
+
+.ChatMessage--user {
+    align-self: flex-end;
+    background: var(--accent);
+    margin-right: 15px;
+    color: #fff;
+}
+
+.ChatMessage--assistant {
+    align-self: flex-start;
+    background: var(--bubble-bg);
+    margin-left: 27px;
+}
+
+
+.ChatInputBar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 64px;
+    padding: 0 12px 0 24px;
+    box-sizing: border-box;
+    border-radius: 32px;
+    background: var(--benefit-card-bg);
+}
+
+.ChatInputBar:focus-within {
+    border-color: rgba(0, 0, 0, 0.15);
+}
+
+.ChatInput {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font: inherit;
+    font-size: 16px;
+    color: var(--benefit-title);
+    resize: none;
+}
+
+.ChatInput::placeholder {
+    color: var(--benefit-text);
+}
+
+.ChatSend {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border: none;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    transition: background 0.15s, opacity 0.15s;
+}
+
+.ChatSend:hover:not(:disabled) {
+    background: var(--accent-hover);
+}
+
+.ChatSend:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.ChatSend svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.Spinner {
+    display: block;
+    width: 16px;
+    height: 16px;
+    margin: 4px 0;
+    border: 2px solid rgba(0, 0, 0, 0.15);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+
+/* Chrome, Edge, Safari */
+.ChatMessages::-webkit-scrollbar {
+    width: 8px;
+}
+
+.ChatMessages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.ChatMessages::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.ChatMessages::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.35);
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

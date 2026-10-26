@@ -1,0 +1,176 @@
+.Archive {
+    --a-red: #ef3124;
+    --a-text: #1f1f1f;
+    --a-muted: #757575;
+    --a-row: #f2f3f5;
+    --a-row-hover: #e8e9ec;
+
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 16px;
+    overflow-y: auto;
+    color: var(--a-text);
+    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+.Archive--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ArchiveEmpty {
+    margin: 0;
+    color: var(--a-muted);
+    font-size: 16px;
+}
+
+.ArchiveList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* ---------- row ---------- */
+
+.ArchiveItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 16px;
+    background: var(--a-row);
+    transition: background 0.15s;
+}
+
+.ArchiveItem:hover,
+.ArchiveItem:focus-within {
+    background: var(--a-row-hover);
+}
+
+.ArchiveItemTitle {
+    flex: 1;
+    min-width: 0;
+    padding: 14px 18px;
+    border: 0;
+    border-radius: 16px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 18px;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+/* ---------- delete ---------- */
+
+.ArchiveDelete {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    margin-right: 10px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--a-muted);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s, background 0.15s, color 0.15s;
+}
+
+.ArchiveDelete svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.ArchiveItem:hover .ArchiveDelete,
+.ArchiveDelete:focus-visible {
+    opacity: 1;
+}
+
+.ArchiveDelete:hover {
+    background: #fff;
+    color: var(--a-red);
+}
+
+/* touch devices: no hover, keep the button visible */
+@media (hover: none) {
+    .ArchiveDelete {
+        opacity: 1;
+    }
+}
+
+/* ---------- confirm ---------- */
+
+.ArchiveConfirm {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+    margin-right: 10px;
+}
+
+.ArchiveConfirmText {
+    color: var(--a-muted);
+    font-size: 14px;
+}
+
+.ArchiveBtn {
+    height: 34px;
+    padding: 0 14px;
+    border: 1px solid var(--a-text);
+    border-radius: 10px;
+    background: transparent;
+    color: var(--a-text);
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.ArchiveBtn:hover {
+    background: var(--a-text);
+    color: #fff;
+}
+
+.ArchiveBtn--danger {
+    border-color: var(--a-red);
+    background: var(--a-red);
+    color: #fff;
+}
+
+.ArchiveBtn--danger:hover {
+    background: #d12a1f;
+    border-color: #d12a1f;
+}
+
+.ArchiveItemTitle:focus-visible,
+.ArchiveDelete:focus-visible,
+.ArchiveBtn:focus-visible {
+    outline: 2px solid var(--a-red);
+    outline-offset: 2px;
+}
+
+@media (max-width: 520px) {
+    .ArchiveItemTitle {
+        font-size: 16px;
+    }
+
+    .ArchiveConfirmText {
+        display: none;
+    }
+}

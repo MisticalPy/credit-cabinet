@@ -1,0 +1,167 @@
+:root {
+    --red: #ef3124;
+    --bg: #000000;
+    --bg-light: #ffffff;
+    --card-light: #e9eaee;
+    --muted: #9b9b9b;
+
+    /* dark-theme extras used by the hero cards */
+    --card-dark: #1c1c1e;
+    --card-dark-hover: #242426;
+    --icon-bg: #2c2c2f;
+}
+
+.hero-block {
+    width: 1140px;
+    height: auto;
+    margin: 0 auto;
+    background-color: #000000;
+    box-sizing: border-box;
+    padding-bottom: 72px;
+}
+
+.Main-container {
+    background: var(--bg);
+    color: var(--bg-light);
+    font-family: "Inter", "Golos Text", system-ui, -apple-system, "Segoe UI", sans-serif;
+    box-sizing: border-box;
+    max-width: 1140px;
+    height: auto;
+    /*display: flex;*/
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 auto;
+}
+
+.main-text {
+    max-width: 660px;
+    margin: 0 0 28px;
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 48px;
+    line-height: 1.21;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-align: left;
+    color: var(--bg-light);
+    padding-top: 170px;
+}
+
+.bottom-text {
+    margin: 0 0 28px;
+    font-size: 15px;
+    line-height: 1.4;
+    font-weight: 400;
+    color: #f2f2f2;
+    margin-bottom: 40px;
+}
+
+/* Button */
+.ButtonDown {
+    width: 180px;
+    height: 56px;
+    margin-bottom: 28px;
+}
+
+.buttonComponentGetMoney {
+    display: inline-flex;
+    align-items: center;
+    width: 180px;
+    height: 56px;
+    border-radius: 15px;
+    justify-content: center;
+    min-height: 34px;
+    padding: 0 16px;
+    background: var(--red);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.getMoney {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.buttonComponentGetMoney:hover {
+    filter: brightness(1.1);
+}
+
+.buttonComponentGetMoney:active {
+    transform: scale(0.97);
+}
+
+/* Cards row */
+.BottomBlocks {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 1140px;
+    max-width: 100%;
+    height: 178px;
+    margin: 40px auto 0;
+}
+
+.Block1,
+.Block2,
+.Block3 {
+    position: relative;
+    box-sizing: border-box;
+    flex: 0 0 267px;
+    width: 267px;
+    height: 178px;
+    padding: 14px;
+    border-radius: 30px;
+    background: var(--card-dark);
+    transition: background 0.2s ease;
+}
+
+
+.Block1:hover,
+.Block2:hover,
+.Block3:hover {
+    background: var(--card-dark-hover);
+}
+
+/* Card text (selectors cover both blockTextH and BlockTextH) */
+.Block1,
+.Block2,
+.Block3 {
+    padding: 24px; /* was 14px */
+}
+
+.blockTextH,
+.BlockTextH {
+    margin: 0 0 6px;
+    font-size: 18px;
+    line-height: 1.2;
+    font-weight: 700;
+    color: #fff;
+}
+
+.blockTextP,
+.BlockTextP {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.3;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.9); /* on the screenshot it's almost white, not gray */
+}
+
+
+.blockImage {
+    position: absolute;
+    right: 24px;
+    bottom: 24px;
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    background: #2f2f31;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+

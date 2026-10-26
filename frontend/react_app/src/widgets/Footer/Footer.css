@@ -1,0 +1,760 @@
+:root {
+    --red: #ef3124;
+    --bg: #000000;
+    --bg-light: #ffffff;
+    --muted: #9b9b9b;
+
+    --footer-bg: #ffffff;
+    --footer-text: #2b2b2b;
+    --footer-radius: 64px;
+    --footer-min-height: auto;
+    --feedback-bg: var(--red);
+    --feedback-bg-hover: #d82a1e;
+    --benefit-card-bg: #f1f2f4;
+    --benefit-title: #1c1c1e;
+    --benefit-text: #6b6b6f;
+}
+
+.Panel{
+    width: 100%;
+}
+
+
+.Infinite {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 auto;
+    width: 100%;
+    min-height: var(--footer-min-height);
+    box-sizing: border-box;
+    background-color: var(--footer-bg);
+    border-radius: var(--footer-radius) var(--footer-radius) 0 0;
+    color: var(--footer-text);
+}
+
+.Footer {
+    padding: 72px 40px;
+}
+
+
+.FooterContent {
+    width: 1140px;
+    max-width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+
+.feedbackRightDown {
+    position: fixed;
+    right: 16px;
+    bottom: 48px;
+    z-index: 100;
+}
+
+
+
+.feedbackButton svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--bg-light);
+}
+
+
+.Benefits {
+    width: 100%;
+    font-family: "Inter", "Golos Text", system-ui, -apple-system, "Segoe UI", sans-serif;
+    box-sizing: border-box;
+}
+
+.BenefitsTitle {
+    max-width: 640px;
+    margin: 0 0 40px;
+    font-size: 40px;
+    line-height: 1.2;
+    font-weight: 600;
+    color: var(--benefit-title);
+}
+
+.BenefitsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px 24px;
+}
+
+.BenefitCard {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    height: 290px;
+    padding: 32px;
+    border-radius: 30px;
+    background: var(--benefit-card-bg);
+    transition: background 0.2s ease;
+}
+
+.BenefitCard:hover {
+    background: #e9eaee;
+}
+
+.BenefitCardWide {
+    grid-column: 1 / -1;
+}
+
+.BenefitCardTitle {
+    margin: 0 0 8px;
+    font-size: 20px;
+    line-height: 1.3;
+    font-weight: 600;
+    color: var(--benefit-title);
+}
+
+.BenefitCardText {
+    max-width: 420px;
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.4;
+    font-weight: 400;
+    color: var(--benefit-text);
+}
+
+.BenefitButton {
+    position: absolute;
+    left: 32px;
+    bottom: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    padding: 0 24px;
+    border-radius: 12px;
+    background: var(--red);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: filter 0.2s ease, transform 0.1s ease;
+}
+
+.BenefitButton:hover {
+    filter: brightness(1.1);
+}
+
+.BenefitButton:active {
+    transform: scale(0.97);
+}
+
+.Steps {
+    width: 100%;
+    margin-top: 72px;
+    font-family: "Inter", "Golos Text", system-ui, -apple-system, "Segoe UI", sans-serif;
+    box-sizing: border-box;
+}
+
+.StepsTitle {
+    margin: 0 0 40px;
+    font-size: 40px;
+    line-height: 1.2;
+    font-weight: 600;
+    color: var(--benefit-title);
+}
+
+.StepsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.StepCard {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    height: 256px;
+    padding: 32px;
+    border-radius: 30px;
+    background: var(--benefit-card-bg);
+    transition: background 0.2s ease;
+}
+
+.StepCard:hover {
+    background: #e9eaee;
+}
+
+.StepCardTitle {
+    max-width: 260px;
+    margin: 20px 0 0;
+    font-size: 24px;
+    line-height: 1.25;
+    font-weight: 600;
+    color: var(--benefit-title);
+}
+
+
+.StepCircle {
+    position: relative;
+    width: 44px;
+    height: 44px;
+}
+
+.StepCircle svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.StepCircle circle {
+    fill: none;
+    stroke-width: 2;
+}
+
+.StepCircleTrack {
+    stroke: #e1e2e6;
+}
+
+.StepCircleProgress {
+    stroke: var(--red);
+    stroke-linecap: round;
+}
+
+.StepNumber {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--benefit-title);
+}
+
+.ChatPreview {
+    width: 100%;
+    margin-top: 120px;
+    font-family: "Inter", "Golos Text", system-ui, -apple-system, "Segoe UI", sans-serif;
+    box-sizing: border-box;
+}
+
+.ChatPreviewTitle {
+    margin: 0 0 40px;
+    font-size: 40px;
+    line-height: 1.2;
+    font-weight: 600;
+    color: var(--benefit-title);
+}
+
+
+.ChatWindow {
+    display: flex;
+    width: 100%;
+    height: 700px;
+    padding: 6px 6px 6px 0;
+    box-sizing: border-box;
+    border-radius: 32px;
+    background: var(--bg);
+}
+
+
+.SideNav {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 320px;
+    width: 320px;
+    box-sizing: border-box;
+    padding: 24px 20px 20px;
+    color: var(--bg-light);
+    overflow: hidden;
+    transition: flex-basis 0.25s ease, width 0.25s ease;
+}
+
+.SideNavCollapsed {
+    flex-basis: 88px;
+    width: 88px;
+}
+
+.SideNavHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 28px;
+    padding: 0 4px;
+}
+
+.SideNavLogo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.SideNavLogoMark {
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -1px;
+    color: var(--red);
+}
+
+.SideNavLogoText {
+    max-width: 100px;
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+.SideNavToggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: #3a3a3e;
+    color: var(--bg-light);
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.SideNavToggle:hover {
+    background: #4a4a4f;
+}
+
+.SideNavToggle svg {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.25s ease;
+}
+
+.SideNavCollapsed .SideNavToggle svg {
+    transform: rotate(180deg);
+}
+
+.SideNavMenu {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 6px;
+}
+
+.SideNavItem {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    color: #d7d7da;
+    font-size: 15px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.SideNavItem:hover {
+    background: #161618;
+    color: var(--bg-light);
+}
+
+.SideNavItemActive {
+    background: #1f1f22;
+    color: var(--bg-light);
+}
+
+.SideNavItemActive::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 3px;
+    border-radius: 3px;
+    background: var(--red);
+}
+
+.SideNavItem:focus-visible,
+.SideNavToggle:focus-visible,
+.SideNavLogin:focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 2px;
+}
+
+.SideNavIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 22px;
+    width: 22px;
+    height: 22px;
+}
+
+.SideNavIcon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.SideNavLabel {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.SideNavFooter {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #26262a;
+}
+
+.SideNavUser {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 4px;
+}
+
+.SideNavAvatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #2a2a2e;
+    color: #b5b5ba;
+}
+
+.SideNavAvatar svg {
+    width: 22px;
+    height: 22px;
+}
+
+.SideNavUserName {
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.SideNavLogin {
+    padding: 10px 22px;
+    border-radius: 12px;
+    background: var(--red);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    transition: filter 0.2s ease, transform 0.1s ease;
+}
+
+.SideNavLogin:hover {
+    filter: brightness(1.1);
+}
+
+.SideNavLogin:active {
+    transform: scale(0.97);
+}
+
+/* collapsed: icons only */
+.SideNavCollapsed .SideNavHeader {
+    flex-direction: column;
+    gap: 16px;
+}
+
+.SideNavCollapsed .SideNavLogoText,
+.SideNavCollapsed .SideNavLabel,
+.SideNavCollapsed .SideNavUserName,
+.SideNavCollapsed .SideNavLogin {
+    display: none;
+}
+
+.SideNavCollapsed .SideNavItem {
+    justify-content: center;
+    padding: 14px 0;
+}
+
+.SideNavCollapsed .SideNavUser {
+    justify-content: center;
+    padding: 0;
+}
+
+@media (max-width: 768px) {
+    .SideNav {
+        flex-basis: 88px;
+        width: 88px;
+    }
+
+    .SideNav .SideNavHeader {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .SideNav .SideNavLogoText,
+    .SideNav .SideNavLabel,
+    .SideNav .SideNavUserName,
+    .SideNav .SideNavLogin {
+        display: none;
+    }
+
+    .SideNav .SideNavItem {
+        justify-content: center;
+        padding: 14px 0;
+    }
+
+    .SideNav .SideNavUser {
+        justify-content: center;
+        padding: 0;
+    }
+}
+
+
+
+.ChatGreeting {
+    margin: 0;
+    font-size: 24px;
+    line-height: 1.3;
+    font-weight: 600;
+    text-align: center;
+    color: var(--benefit-title);
+}
+
+
+.ChatSend {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: var(--red);
+    cursor: pointer;
+    transition: filter 0.2s ease, transform 0.1s ease;
+}
+
+.ChatSend:hover {
+    filter: brightness(1.1);
+}
+
+.ChatSend:active {
+    transform: scale(0.95);
+}
+
+.ChatSend svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.loan-catalog {
+    --lc-text: #1f1f1f;
+    --lc-muted: #757575;
+    --lc-card: #f1f2f4;
+    --lc-pill: #e8e9ec;
+    --lc-dark: #1c1c1c;
+
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 24px 32px;
+    color: var(--lc-text);
+    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+.loan-catalog__title {
+    margin: 0 0 32px;
+    text-align: center;
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+    line-height: 1.15;
+}
+
+/* Tabs */
+.loan-catalog__tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 32px;
+}
+
+.loan-catalog__tab {
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--lc-pill);
+    color: var(--lc-text);
+    font: inherit;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.loan-catalog__tab:hover {
+    background: #dcdde1;
+}
+
+.loan-catalog__tab.is-active {
+    background: var(--lc-dark);
+    color: #fff;
+}
+
+.loan-catalog__tab:focus-visible,
+.loan-card__btn:focus-visible {
+    outline: 2px solid #4f7cff;
+    outline-offset: 2px;
+}
+
+/* Grid */
+.loan-catalog__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 24px;
+}
+
+/* Card */
+.loan-card {
+    display: flex;
+    overflow: hidden;
+    border-radius: 20px;
+    background: var(--lc-card);
+}
+
+.loan-card__media {
+    flex: 0 0 178px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 72px;
+}
+
+.loan-card--open .loan-card__media {
+    background: #ffc9c9;
+}
+.loan-card--develop .loan-card__media {
+    background: #a3f5c8;
+}
+.loan-card--current .loan-card__media {
+    background: #c9bdff;
+}
+
+.loan-card__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 24px 20px;
+}
+
+.loan-card__name {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.loan-card__params {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.loan-card__param {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.loan-card__label {
+    color: var(--lc-muted);
+    font-size: 14px;
+}
+
+.loan-card__value {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.35;
+    white-space: nowrap;
+}
+
+/* Actions */
+.loan-card__actions {
+    display: flex;
+    gap: 12px;
+    margin-top: auto;
+}
+
+.loan-card__btn {
+    height: 40px;
+    padding: 0 24px;
+    border: 1px solid var(--lc-dark);
+    border-radius: 10px;
+    background: transparent;
+    color: var(--lc-dark);
+    font: inherit;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.loan-card__btn:first-child {
+    flex: 1;
+    max-width: 161px;
+}
+
+.loan-card__btn:hover {
+    background: var(--lc-dark);
+    color: #fff;
+}
+
+.loan-card__btn--icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    padding: 0;
+}
+
+.loan-catalog__note {
+    margin: 24px 0 0;
+    text-align: center;
+    color: var(--lc-muted);
+    font-size: 12px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .loan-catalog__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 520px) {
+    .loan-catalog {
+        padding: 32px 16px 24px;
+    }
+    .loan-card {
+        flex-direction: column;
+    }
+    .loan-card__media {
+        flex-basis: 120px;
+        font-size: 56px;
+    }
+    .loan-card__params {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
