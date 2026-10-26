@@ -73,3 +73,19 @@ def test_submit_without_profile_is_400(auth_client, make_product):
     ).json()["id"]
 
     assert auth_client.post(f"/api/applications/{app_id}/submit").status_code == 400
+
+
+def test_client_does_not_see_scoring_comment_in_history(client_with_application):
+    client, app_id = client_with_application
+    submit_body = client.post(f"/api/applications/{app_id}/submit").json()
+    manager = User.objects.create_user(username="manager", role=User.Role.MANAGER, is_staff=True)
+    services.decide(
+        application_id=app_id, manager=manager, decision=S.APPROVED, comment="я дам денег"
+    )
+
+    detail_body = client.get(f"/api/applications/{app_id}").json()
+
+    for body in (submit_body, detail_body):
+        comments = [h["comment"] for h in body["history"]]
+        assert not any("Рекомендация" in c or "балл" in c for c in comments)
+    assert "я дам денег" in [h["comment"] for h in detail_body["history"]]

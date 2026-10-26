@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from ninja import Field, Schema
 
-from apps.applications.models import LoanApplication
+from apps.applications.models import ApplicationStatusHistory, LoanApplication
 
 
 class ApplicationIn(Schema):
@@ -18,6 +18,11 @@ class HistoryOut(Schema):
     to_status: LoanApplication.Status
     comment: str
     created_at: datetime
+
+    @staticmethod
+    def resolve_comment(obj: ApplicationStatusHistory) -> str:
+        """Комментарий системных переходов (скоринг, рекомендация) клиенту не отдаём."""
+        return "" if obj.actor_id is None else obj.comment
 
 
 class ApplicationOut(Schema):
