@@ -2,6 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from ninja import NinjaAPI
 from ninja.security import django_auth
 
+from apps.applications.api import router as applications_router
 from apps.core.exceptions import ServiceError
 from apps.products.api import router as products_router
 from apps.users.api import profile_router
@@ -11,6 +12,7 @@ api = NinjaAPI(title="Умный кредитный кабинет", version="0.
 api.add_router("/auth", users_router)
 api.add_router("/profile", profile_router)
 api.add_router("/products", products_router)
+api.add_router("/applications", applications_router)
 
 
 @api.exception_handler(ServiceError)
