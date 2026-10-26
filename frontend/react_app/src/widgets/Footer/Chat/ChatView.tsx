@@ -54,8 +54,7 @@ function ChatView() {
                             >
                                 {m.status === 'streaming' && !m.text ? (
                                     <>
-                                        <span className="Spinner" aria-label="Ассистент печатает" />{' '}
-                                        печатает...
+                                        <span className="Spinner" aria-label="Ассистент печатает" />
                                     </>
                                 ) : (
                                     m.text

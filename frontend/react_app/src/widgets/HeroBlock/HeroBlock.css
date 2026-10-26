@@ -118,11 +118,6 @@
 }
 
 
-.Block1:hover,
-.Block2:hover,
-.Block3:hover {
-    background: var(--card-dark-hover);
-}
 
 /* Card text (selectors cover both blockTextH and BlockTextH) */
 .Block1,

@@ -1,0 +1,65 @@
+.profile-menu {
+    border-top: 1px solid #c8c8d0;
+}
+
+.profile-menu__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 24px 0;
+    border: 0;
+    border-bottom: 1px solid #c8c8d0;
+    background: none;
+    color: #1a1a1a;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.profile-menu__item > span:first-child {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.profile-menu__title {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.profile-menu__text {
+    font-size: 15px;
+    color: #555;
+}
+
+.profile-menu__chevron {
+    font-size: 28px;
+    color: #b0b0b8;
+}
+
+.profile-menu__item:hover .profile-menu__chevron {
+    color: #1a1a1a;
+}
+
+.profile-logout {
+    margin-top: auto;
+    padding: 14px 20px;
+    border: 0;
+    border-radius: 12px;
+    background: #f1f2f4;
+    color: #1a1a1a;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.profile-logout:hover {
+    background: #e4e5e8;
+}
+
+.profile-logout:disabled {
+    opacity: 0.6;
+    cursor: default;
+}

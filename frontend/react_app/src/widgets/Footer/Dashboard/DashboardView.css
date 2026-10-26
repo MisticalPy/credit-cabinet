@@ -9,10 +9,12 @@
     --d-interest: #dddfe4;
 
     width: 100%;
-    height: 688px;
+    height: 688px;             /* ChatWindow 700px minus its 6px top and bottom padding */
     box-sizing: border-box;
+    /* no overflow here */
     color: var(--d-text);
     font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
 }
 
 
@@ -22,17 +24,33 @@
 }
 
 
-
-/* ---------- calculator container ---------- */
+/*.dash-calc {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    gap: 8px;*/
+/*    min-height: 100%;   !* fills the window, grows with content *!*/
+/*    border-radius: 32px;*/
+/*    background: var(--d-panel);*/
+/*    !*height: 668px;*!*/
+/*    !* no fixed height here *!*/
+/*}*/
 
 .dash-calc {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    height: 673px;              /* never taller than .dash */
+    min-width: 0;
+    overflow-y: auto;          /* the scroll lives here */
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: #c9cacf transparent;
     border-radius: 32px;
     background: var(--d-panel);
-    height: 688px;
+    padding: 5px 10px 10px;
 }
+
 
 .dash-controls {
     order: 2; /* sliders go below the chart */
@@ -50,6 +68,26 @@
     border-radius: 26px;
     background: #fff;
     min-width: 0;
+}
+
+.dash-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    height: 100%;
+    padding: 24px;
+    box-sizing: border-box;
+    border-radius: 32px;
+    background: #ffffff;
+    text-align: center;
+}
+
+.dash-empty__text {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
 }
 
 /* ---------- fields ---------- */
@@ -93,6 +131,7 @@
 .dash-controls__note {
     grid-column: 1 / -1;
     margin: 4px 0 0;
+    margin-left: 13px;
     color: var(--d-muted);
     font-size: 12px;
     line-height: 1.4;
@@ -317,6 +356,67 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: clip;
+}
+
+.dash-actions {
+    order: 3;
+    position: sticky;
+    bottom: 0;
+    margin-top: auto;
+    display: flex;
+    justify-content: flex-end;
+    padding: 12px 15px 15px;
+    border-radius: 0 0 32px 32px;
+    background: var(--d-panel);
+}
+
+.dash-submit {
+    position: relative;
+    width: 150px;
+    height: 40px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--d-red);
+    color: #fff;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    left: 630px;
+    bottom: 48px;
+}
+
+.dash-submit-WC {
+    position: relative;
+    width: 150px;
+    height: 40px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--d-red);
+    color: #fff;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    bottom: 5px;
+}
+
+/*.dash-send {*/
+/*    padding: 14px 32px;*/
+/*    height: 50px;*/
+/*    width: 50px;*/
+/*    border: 0;*/
+/*    border-radius: 12px;*/
+/*    background: #47ff00;*/
+/*    color: #fff;*/
+/*    font: inherit;*/
+/*    font-size: 15px;*/
+/*    font-weight: 600;*/
+/*    cursor: pointer;*/
+/*}*/
+
+.dash-submit:hover {
+    filter: brightness(0.95);
 }
 
 /* ---------- slot for LoanCatalog ---------- */

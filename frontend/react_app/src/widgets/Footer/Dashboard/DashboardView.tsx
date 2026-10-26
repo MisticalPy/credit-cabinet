@@ -1,4 +1,5 @@
-import { useMemo, useState, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
+import { useLocation, useOutletContext } from 'react-router-dom';
 import './DashboardView.css';
 
 /* ---------- helpers ---------- */
@@ -18,6 +19,25 @@ const formatDuration = (months: number) => {
     return [y ? `${y} л.` : '', m ? `${m} мес.` : ''].filter(Boolean).join(' ') || '0 мес.';
 };
 
+/** Loan card data passed from the catalog via router state. */
+export interface DashboardPreset {
+    productId: number | string;
+    name: string;
+    minAmount: number;
+    maxAmount: number;
+    rate: number;
+    minTermMonths: number;
+    maxTermMonths: number;
+}
+
+/** Provided by Footer through <Outlet context={...} />. */
+export interface DashboardOutletContext {
+    openApplication: (
+        productId: DashboardPreset['productId'],
+        values: { amount: number; term: number },
+    ) => void;
+}
+
 interface YearRow {
     year: number;
     principal: number;
@@ -33,12 +53,12 @@ interface Result {
 }
 
 /** Annuity schedule with optional extra monthly payment, aggregated by year. */
-function simulate(amount: number, annualRate: number, termYears: number, extra: number): Result {
-    const n = termYears * 12;
+function simulate(amount: number, annualRate: number, termMonths: number, extra: number): Result {
+    const n = termMonths;
     const r = annualRate / 100 / 12;
     const payment = r === 0 ? amount / n : (amount * r) / (1 - Math.pow(1 + r, -n));
 
-    const years: YearRow[] = Array.from({ length: termYears }, (_, i) => ({
+    const years: YearRow[] = Array.from({ length: Math.ceil(n / 12) }, (_, i) => ({
         year: i + 1,
         principal: 0,
         interest: 0,
@@ -82,7 +102,7 @@ interface FieldProps {
 }
 
 function Field({ label, display, value, min, max, step, marks, onChange }: FieldProps) {
-    const progress = ((value - min) / (max - min)) * 100;
+    const progress = max > min ? ((value - min) / (max - min)) * 100 : 0;
     return (
         <div className="dash-field">
             <div className="dash-field__box">
@@ -117,17 +137,58 @@ interface Props {
 }
 
 export default function DashboardView({ loanCatalog }: Props) {
-    const [amount, setAmount] = useState(1_000_000);
-    const [term, setTerm] = useState(5);
-    // Placeholder value for illustration only — replace with a real offer's rate.
-    const [rate, setRate] = useState(20);
+    // Set by the calculator button on a loan card: navigate('/dashboard', { state: { preset } })
+    const { state } = useLocation();
+    const preset = (state as { preset?: DashboardPreset } | null)?.preset;
+    const outlet = useOutletContext<DashboardOutletContext | undefined>();
+    console.log({ preset, hasOpen: !!outlet?.openApplication });
+
+    const [amount, setAmount] = useState(preset?.minAmount ?? 1_000_000);
+    const [term, setTerm] = useState(preset?.minTermMonths ?? 60); // months
+    // Without a preset this is a placeholder for illustration only.
+    const [rate, setRate] = useState(preset?.rate ?? 20);
     const [extra, setExtra] = useState(0);
+
+    // Another card was chosen while the dashboard is already open.
+    useEffect(() => {
+        if (!preset) return;
+        setAmount(preset.minAmount);
+        setTerm(preset.minTermMonths);
+        setRate(preset.rate);
+        setExtra(0);
+    }, [preset]);
+
+    const amountMin = preset?.minAmount ?? 30_000;
+    const amountMax = preset?.maxAmount ?? 30_000_000;
+    const termMin = preset?.minTermMonths ?? 12;
+    const termMax = preset?.maxTermMonths ?? 180;
 
     const base = useMemo(() => simulate(amount, rate, term, 0), [amount, rate, term]);
     const res = useMemo(() => simulate(amount, rate, term, extra), [amount, rate, term, extra]);
 
     const yMax = Math.max(...res.years.map((y) => y.principal + y.interest), 1);
     const ticks = [1, 2 / 3, 1 / 3, 0].map((k) => yMax * k);
+
+    if (!preset) {
+        return (
+            <div className="dash">
+                <div className="dash-empty">
+                    <p className="dash-empty__text">Выберите кредит, чтобы рассчитать платёж</p>
+                    <button
+                        type="button"
+                        className="dash-submit-WC"
+                        onClick={() =>
+                            document
+                                .querySelector('.loan-catalog')
+                                ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                        }
+                    >
+                        Выбрать кредит
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="dash">
@@ -138,20 +199,24 @@ export default function DashboardView({ loanCatalog }: Props) {
                         label="Сумма кредита"
                         display={rub(amount)}
                         value={amount}
-                        min={30_000}
-                        max={30_000_000}
+                        min={amountMin}
+                        max={amountMax}
                         step={10_000}
-                        marks={['30 тыс.', '15 млн', '30 млн']}
+                        marks={
+                            preset
+                                ? [compact(amountMin), compact(amountMax)]
+                                : ['30 тыс.', '15 млн', '30 млн']
+                        }
                         onChange={setAmount}
                     />
                     <Field
                         label="Срок кредита"
-                        display={`${term} ${term === 1 ? 'год' : term < 5 ? 'года' : 'лет'}`}
+                        display={formatDuration(term)}
                         value={term}
-                        min={1}
-                        max={15}
+                        min={termMin}
+                        max={termMax}
                         step={1}
-                        marks={['1 год', '15 лет']}
+                        marks={[formatDuration(termMin), formatDuration(termMax)]}
                         onChange={setTerm}
                     />
                     <Field
@@ -174,9 +239,22 @@ export default function DashboardView({ loanCatalog }: Props) {
                         marks={['0', '100 тыс.']}
                         onChange={setExtra}
                     />
-                    {/*<p className="dash-controls__note">*/}
-                    {/*    Расчёт ориентировочный. Итоговые условия определяет кредитор.*/}
-                    {/*</p>*/}
+                    {preset && <p className="dash-controls__note">Расчёт по кредиту «{preset.name}»</p>}
+                    {preset && (
+                            <button
+                                type="button"
+                                className="dash-submit"
+                                onClick={() =>
+                                    window.dispatchEvent(
+                                        new CustomEvent('loan:open-application', {
+                                            detail: { productId: preset.productId, values: { amount, term } },
+                                        }),
+                                    )
+                                }
+                            >
+                                Оформить
+                            </button>
+                    )}
                 </div>
 
                 {/* result */}
@@ -258,6 +336,23 @@ export default function DashboardView({ loanCatalog }: Props) {
                         </div>
                     </div>
                 </div>
+                {/*{preset && (*/}
+                {/*    <div className="dash-actions">*/}
+                {/*        <button*/}
+                {/*            type="button"*/}
+                {/*            className="dash-submit"*/}
+                {/*            onClick={() =>*/}
+                {/*                window.dispatchEvent(*/}
+                {/*                    new CustomEvent('loan:open-application', {*/}
+                {/*                        detail: { productId: preset.productId, values: { amount, term } },*/}
+                {/*                    }),*/}
+                {/*                )*/}
+                {/*            }*/}
+                {/*        >*/}
+                {/*            Оформить*/}
+                {/*        </button>*/}
+                {/*    </div>*/}
+                {/*)}*/}
             </div>
 
             {/* slot: loan offers block (LoanCatalog) */}

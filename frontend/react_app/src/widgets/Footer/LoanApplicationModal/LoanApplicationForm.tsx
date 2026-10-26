@@ -68,6 +68,8 @@ interface Props {
     onLogin: () => void;
     onClose: () => void;
     onSubmit?: (data: LoanApplication) => void | Promise<void>;
+    /** Amount (₽) and term (months) chosen on the dashboard; overrides the product defaults. */
+    initialValues?: { amount: number; term: number };
 }
 
 const loanFields = (p: Product) => ({
@@ -175,7 +177,7 @@ function SelectField({ label, value, options, onChange }: SelectFieldProps) {
     );
 }
 
-function LoanApplicationForm({ product, isLoggedIn, onLogin, onClose, onSubmit }: Props) {
+function LoanApplicationForm({ product, isLoggedIn, onLogin, onClose, onSubmit, initialValues }: Props) {
     const [step, setStep] = useState(0);
     const [data, setData] = useState<LoanApplication>(() => initialData(product));
     const [confirmOpen, setConfirmOpen] = useState(false);
@@ -185,11 +187,18 @@ function LoanApplicationForm({ product, isLoggedIn, onLogin, onClose, onSubmit }
 
     // Another card was chosen: update loan fields, keep what the user already typed.
     useEffect(() => {
-        setData((prev) => ({ ...prev, ...loanFields(product) }));
+        setData((prev) => ({
+            ...prev,
+            ...loanFields(product),
+            ...(initialValues && {
+                amount: String(initialValues.amount),
+                term: String(initialValues.term),
+            }),
+        }));
         setStep(0);
         setDone(false);
         setConfirmOpen(false);
-    }, [product]);
+    }, [product, initialValues]);
 
     const set = <K extends keyof LoanApplication>(key: K, value: LoanApplication[K]) =>
         setData((prev) => ({ ...prev, [key]: value }));

@@ -1,10 +1,13 @@
 // @ts-ignore
 import React from 'react';
+import {useState} from "react";
 import './Header.css'
 import {useAuth} from "../../entities/session/model/Auth-context.ts";
+import { ProfileDrawer } from '../../pages/Login/UI/ProfileDrawer';
 
 function Header(){
     const { openLogin, status } = useAuth();
+    const [profileOpen, setProfileOpen] = useState(false);
 
     return (
         <>
@@ -32,8 +35,8 @@ function Header(){
                     <div className={"headerRightButtons"}>
                         {status === 'ready' ? (
                             <div className={"headerRightButtonsR"}>
-                                <a className={"inCabinet"} href="/" onClick={(e) => { e.preventDefault(); openLogin(); }}>
-                                    <span className={"inCabinetText"}>Профиль</span>
+                                <a className={"inCabinetA"} href="/" onClick={(e) => { e.preventDefault(); setProfileOpen(true); }}>
+                                    <span className={"inCabinetTextA"}>Профиль</span>
                                 </a>
                             </div>
                         ) : (
@@ -50,6 +53,7 @@ function Header(){
                                 </div>
                             </>
                         )}
+                        <ProfileDrawer open={profileOpen} onClose={() => setProfileOpen(false)} />
                     </div>
                 </div>
             </div>
