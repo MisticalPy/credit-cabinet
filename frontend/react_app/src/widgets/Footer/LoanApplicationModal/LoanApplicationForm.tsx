@@ -1,129 +1,95 @@
 import { useEffect, useState } from 'react';
-import type {Product, Purpose} from "../../../shared/api/types.ts";
+import { useNavigate } from 'react-router-dom';
+import type { BusinessType, Industry, Payment, Product, Profile } from "../../../shared/api/types.ts";
+import { api, ApiError } from "../../../shared/api/client.ts";
+import { products as productsApi, profile as profileApi } from "../../../shared/api/endpoints.ts";
+import { useProducts } from "../../../entities/product/model/useProducts.ts";
+import { useAuth } from "../../../entities/session/model/Auth-context.ts";
+import { statusLabel } from './statusLabel.ts';
 import './LoanApplicationForm.css';
 
 const nf = new Intl.NumberFormat('ru-RU');
-const money = (n: number) => nf.format(n).replace(/\u00A0/g, ' ');
+const money = (n: number | string) => nf.format(Number(n)).replace(/ /g, ' ');
 
-const PURPOSE_LABELS: Record<Purpose, string> = {
-    working_capital: 'Оборотные средства',
-    equipment: 'Оборудование',
-    development: 'Развитие бизнеса',
-    refinancing: 'Рефинансирование',
-};
-
-const EDUCATION = [
-    'Среднее',
-    'Среднее специальное',
-    'Неполное высшее',
-    'Высшее',
-    'Несколько высших / учёная степень',
+const BUSINESS_TYPES: { value: BusinessType; label: string }[] = [
+    { value: 'ip', label: 'ИП' },
+    { value: 'ooo', label: 'ООО' },
 ];
 
-const MARITAL = [
-    'Не женат / не замужем',
-    'Женат / замужем',
-    'Разведён / разведена',
-    'Вдовец / вдова',
+const INDUSTRIES: { value: Industry; label: string }[] = [
+    { value: 'trade', label: 'Торговля' },
+    { value: 'food', label: 'Общепит' },
+    { value: 'services', label: 'Услуги' },
+    { value: 'manufacturing', label: 'Производство' },
+    { value: 'construction', label: 'Строительство' },
+    { value: 'transport', label: 'Транспорт' },
+    { value: 'it', label: 'IT' },
+    { value: 'other', label: 'Другое' },
 ];
 
-const STEP_TITLES = [
-    'Заполните заявку на кредит',
-    'Работа',
-    'Место работы',
-    'Образование и семья',
-    'Дополнительный контакт',
-];
+const labelOf = (list: { value: string; label: string }[], value: string) =>
+    list.find((o) => o.value === value)?.label ?? value;
+
+const STEP_TITLES = ['Заявка', 'Данные компании', 'Согласия'];
 
 const LAST_STEP = STEP_TITLES.length - 1;
 
-export interface LoanApplication {
-    productId: Product['id'];
-    amount: string;
-    term: string;
-    purpose: Purpose;
-    lastName: string;
-    firstName: string;
-    middleName: string;
-    noMiddleName: boolean;
-    phone: string;
-    email: string;
-    agreeData: boolean;
-    agreeAds: boolean;
-    employer: string;
-    employerAddress: string;
-    salary: string;
-    experience: string;
-    position: string;
-    managerPhone: string;
-    education: string;
-    maritalStatus: string;
-    contactPerson: string;
-    contactPhone: string;
+const COMMENT_MAX = 1000;
+
+interface ProfileForm {
+    business_type: BusinessType;
+    company_name: string;
+    inn: string;
+    industry: Industry | '';
+    monthly_revenue: string;
+    registration_date: string;
+}
+
+const emptyProfile: ProfileForm = {
+    business_type: 'ip',
+    company_name: '',
+    inn: '',
+    industry: '',
+    monthly_revenue: '',
+    registration_date: '',
+};
+
+interface SubmitResult {
+    status: string;
 }
 
 interface Props {
     product: Product;
-    isLoggedIn: boolean;
-    onLogin: () => void;
     onClose: () => void;
-    onSubmit?: (data: LoanApplication) => void | Promise<void>;
     /** Amount (₽) and term (months) chosen on the dashboard; overrides the product defaults. */
     initialValues?: { amount: number; term: number };
 }
 
-const loanFields = (p: Product) => ({
-    productId: p.id,
-    amount: String(Number(p.min_amount)),
-    term: String(p.min_term_months),
-    purpose: p.purpose,
-});
-
-const initialData = (p: Product): LoanApplication => ({
-    ...loanFields(p),
-    lastName: '',
-    firstName: '',
-    middleName: '',
-    noMiddleName: false,
-    phone: '',
-    email: '',
-    agreeData: false,
-    agreeAds: false,
-    employer: '',
-    employerAddress: '',
-    salary: '',
-    experience: '',
-    position: '',
-    managerPhone: '',
-    education: '',
-    maritalStatus: '',
-    contactPerson: '',
-    contactPhone: '',
-});
-
-// Only "is filled" checks. Content validation is up to the backend.
 const filled = (...v: string[]) => v.every((x) => x.trim() !== '');
 
-function isStepFilled(step: number, d: LoanApplication): boolean {
-    switch (step) {
-        case 0:
-            return (
-                filled(d.amount, d.term, d.lastName, d.firstName, d.phone, d.email) &&
-                (d.noMiddleName || filled(d.middleName)) &&
-                d.agreeData
-            );
-        case 1:
-            return filled(d.employer, d.employerAddress, d.salary);
-        case 2:
-            return filled(d.experience, d.position, d.managerPhone);
-        case 3:
-            return filled(d.education, d.maritalStatus);
-        case 4:
-            return filled(d.contactPerson, d.contactPhone);
-        default:
-            return false;
-    }
+const innLength = (t: BusinessType) => (t === 'ip' ? 12 : 10);
+
+function isProfileFormValid(p: ProfileForm): boolean {
+    return (
+        filled(p.company_name, p.industry, p.monthly_revenue, p.registration_date) &&
+        new RegExp(`^\\d{${innLength(p.business_type)}}$`).test(p.inn)
+    );
 }
+
+function isLoanValid(product: Product, amount: string, term: string): boolean {
+    const a = Number(amount);
+    const t = Number(term);
+    return (
+        filled(amount, term) &&
+        a >= Number(product.min_amount) &&
+        a <= Number(product.max_amount) &&
+        Number.isInteger(t) &&
+        t >= product.min_term_months &&
+        t <= product.max_term_months
+    );
+}
+
+const errorText = (e: unknown, fallback: string) => (e instanceof Error ? e.message : fallback);
 
 interface TextFieldProps {
     label: string;
@@ -155,7 +121,7 @@ function TextField({ label, value, onChange, hint, type = 'text', placeholder, d
 interface SelectFieldProps {
     label: string;
     value: string;
-    options: string[];
+    options: { value: string; label: string }[];
     onChange: (v: string) => void;
 }
 
@@ -168,8 +134,8 @@ function SelectField({ label, value, options, onChange }: SelectFieldProps) {
                     Выберите
                 </option>
                 {options.map((o) => (
-                    <option key={o} value={o}>
-                        {o}
+                    <option key={o.value} value={o.value}>
+                        {o.label}
                     </option>
                 ))}
             </select>
@@ -177,58 +143,291 @@ function SelectField({ label, value, options, onChange }: SelectFieldProps) {
     );
 }
 
-function LoanApplicationForm({ product, isLoggedIn, onLogin, onClose, onSubmit, initialValues }: Props) {
+function LoanApplicationForm({ product, onClose, initialValues }: Props) {
+    const { status, openLogin } = useAuth();
+    const isLoggedIn = status === 'ready';
+    const { products } = useProducts();
+    const navigate = useNavigate();
+
     const [step, setStep] = useState(0);
-    const [data, setData] = useState<LoanApplication>(() => initialData(product));
+    const [productId, setProductId] = useState(product.id);
+    const [amount, setAmount] = useState(String(Number(product.min_amount)));
+    const [term, setTerm] = useState(String(product.min_term_months));
+    const [comment, setComment] = useState('');
+    const [payment, setPayment] = useState<Payment | null>(null);
+
+    const [profile, setProfile] = useState<Profile | null>(null);
+    const [profileLoading, setProfileLoading] = useState(true);
+    const [editingProfile, setEditingProfile] = useState(false);
+    const [profileForm, setProfileForm] = useState<ProfileForm>(emptyProfile);
+    const [profileSaving, setProfileSaving] = useState(false);
+    const [profileError, setProfileError] = useState<string | null>(null);
+
+    const [agreeData, setAgreeData] = useState(false);
+    const [agreeBureau, setAgreeBureau] = useState(false);
+    const [applicationId, setApplicationId] = useState<number | null>(null);
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [sending, setSending] = useState(false);
-    const [done, setDone] = useState(false);
+    const [resultStatus, setResultStatus] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    // Another card was chosen: update loan fields, keep what the user already typed.
+    // Выбранный продукт: из списка, а пока он грузится — тот, что передан из Footer.
+    const selected = products.find((p) => p.id === productId) ?? (product.id === productId ? product : null);
+
+    // Another card was chosen: reset the loan fields, keep the profile.
     useEffect(() => {
-        setData((prev) => ({
-            ...prev,
-            ...loanFields(product),
-            ...(initialValues && {
-                amount: String(initialValues.amount),
-                term: String(initialValues.term),
-            }),
-        }));
+        setProductId(product.id);
+        setAmount(String(initialValues?.amount ?? Number(product.min_amount)));
+        setTerm(String(initialValues?.term ?? product.min_term_months));
         setStep(0);
-        setDone(false);
+        setApplicationId(null);
+        setResultStatus(null);
         setConfirmOpen(false);
     }, [product, initialValues]);
 
-    const set = <K extends keyof LoanApplication>(key: K, value: LoanApplication[K]) =>
-        setData((prev) => ({ ...prev, [key]: value }));
+    // Профиль компании: 404 — ещё не заполнен, показываем форму.
+    useEffect(() => {
+        if (!isLoggedIn) return;
+        let cancelled = false;
+        setProfileLoading(true);
+        profileApi
+            .get()
+            .then((p) => {
+                if (!cancelled) setProfile(p);
+            })
+            .catch((e: unknown) => {
+                if (cancelled) return;
+                if (e instanceof ApiError && e.status === 404) {
+                    setEditingProfile(true);
+                } else {
+                    setProfileError(errorText(e, 'Не удалось загрузить данные компании'));
+                }
+            })
+            .finally(() => {
+                if (!cancelled) setProfileLoading(false);
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [isLoggedIn]);
 
-    const minAmount = Number(product.min_amount);
-    const maxAmount = Number(product.max_amount);
+    const loanValid = selected !== null && isLoanValid(selected, amount, term);
+
+    // Ежемесячный платёж пересчитываем при изменении продукта, суммы и срока.
+    useEffect(() => {
+        if (!selected || !loanValid) {
+            setPayment(null);
+            return;
+        }
+        let cancelled = false;
+        productsApi
+            .calculate(selected.id, amount, Number(term))
+            .then((p) => {
+                if (!cancelled) setPayment(p);
+            })
+            .catch(() => {
+                if (!cancelled) setPayment(null);
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [selected, loanValid, amount, term]);
+
+    const changeProduct = (id: string) => {
+        const next = products.find((p) => p.id === Number(id));
+        if (!next) return;
+        setProductId(next.id);
+        setAmount(String(Number(next.min_amount)));
+        setTerm(String(next.min_term_months));
+    };
+
+    const setProfileField = <K extends keyof ProfileForm>(key: K, value: ProfileForm[K]) =>
+        setProfileForm((prev) => ({ ...prev, [key]: value }));
+
+    const startEditProfile = () => {
+        if (profile) {
+            setProfileForm({
+                business_type: profile.business_type,
+                company_name: profile.company_name,
+                inn: profile.inn,
+                industry: profile.industry,
+                monthly_revenue: profile.monthly_revenue,
+                registration_date: profile.registration_date,
+            });
+        }
+        setProfileError(null);
+        setEditingProfile(true);
+    };
+
+    const saveProfile = async () => {
+        if (!profileForm.industry) return;
+        setProfileSaving(true);
+        setProfileError(null);
+        try {
+            const saved = await profileApi.save({ ...profileForm, industry: profileForm.industry });
+            setProfile(saved);
+            setEditingProfile(false);
+        } catch (e) {
+            setProfileError(errorText(e, 'Не удалось сохранить данные компании'));
+        } finally {
+            setProfileSaving(false);
+        }
+    };
 
     const handleConfirm = async () => {
+        if (!selected) return;
         setSending(true);
         setError(null);
         try {
-            await onSubmit?.(data);
+            // Если черновик уже создан, а submit упал — не плодим дубли.
+            let id = applicationId;
+            if (id === null) {
+                const created = await api<{ id: number }>('/applications', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        product_id: selected.id,
+                        amount,
+                        term_months: Number(term),
+                        comment,
+                    }),
+                });
+                id = created.id;
+                setApplicationId(id);
+            }
+            const result = await api<SubmitResult>(`/applications/${id}/submit`, { method: 'POST' });
+            setResultStatus(result.status);
             setConfirmOpen(false);
-            setDone(true);
-        } catch {
-            setError('Не удалось отправить заявку. Попробуйте ещё раз.');
+        } catch (e) {
+            setError(errorText(e, 'Не удалось отправить заявку. Попробуйте ещё раз.'));
         } finally {
             setSending(false);
         }
     };
 
+    const isStepFilled = (s: number): boolean => {
+        switch (s) {
+            case 0:
+                return loanValid;
+            case 1:
+                return profile !== null && !editingProfile;
+            case 2:
+                return agreeData && agreeBureau;
+            default:
+                return false;
+        }
+    };
+
+    const renderProfile = () => {
+        if (profileLoading) return <p className="loan-form__text">Загружаем данные компании…</p>;
+
+        if (editingProfile) {
+            return (
+                <>
+                    <SelectField
+                        label="Форма бизнеса"
+                        value={profileForm.business_type}
+                        options={BUSINESS_TYPES}
+                        onChange={(v) => setProfileField('business_type', v as BusinessType)}
+                    />
+                    <TextField
+                        label="Название компании"
+                        value={profileForm.company_name}
+                        onChange={(v) => setProfileField('company_name', v)}
+                    />
+                    <TextField
+                        label="ИНН"
+                        value={profileForm.inn}
+                        onChange={(v) => setProfileField('inn', v)}
+                        hint={`${innLength(profileForm.business_type)} цифр`}
+                    />
+                    <SelectField
+                        label="Отрасль"
+                        value={profileForm.industry}
+                        options={INDUSTRIES}
+                        onChange={(v) => setProfileField('industry', v as Industry)}
+                    />
+                    <TextField
+                        label="Выручка в месяц, ₽"
+                        type="number"
+                        value={profileForm.monthly_revenue}
+                        onChange={(v) => setProfileField('monthly_revenue', v)}
+                    />
+                    <TextField
+                        label="Дата регистрации"
+                        type="date"
+                        value={profileForm.registration_date}
+                        onChange={(v) => setProfileField('registration_date', v)}
+                    />
+                    {profileError && <p className="loan-form__error">{profileError}</p>}
+                    <div className="loan-form__footer">
+                        {profile && (
+                            <button
+                                type="button"
+                                className="loan-form__btn loan-form__btn--ghost"
+                                disabled={profileSaving}
+                                onClick={() => setEditingProfile(false)}
+                            >
+                                Отмена
+                            </button>
+                        )}
+                        <button
+                            type="button"
+                            className="loan-form__btn"
+                            disabled={profileSaving || !isProfileFormValid(profileForm)}
+                            onClick={saveProfile}
+                        >
+                            {profileSaving ? 'Сохраняем…' : 'Сохранить'}
+                        </button>
+                    </div>
+                </>
+            );
+        }
+
+        if (!profile) {
+            return profileError && <p className="loan-form__error">{profileError}</p>;
+        }
+
+        return (
+            <>
+                <p className="loan-form__text">
+                    {labelOf(BUSINESS_TYPES, profile.business_type)} «{profile.company_name}»
+                    <br />
+                    ИНН {profile.inn}
+                    <br />
+                    Отрасль: {labelOf(INDUSTRIES, profile.industry)}
+                    <br />
+                    Выручка в месяц: {money(profile.monthly_revenue)} ₽
+                    <br />
+                    Дата регистрации: {profile.registration_date} · возраст бизнеса: {profile.business_age_months} мес.
+                </p>
+                <button type="button" className="loan-form__btn loan-form__btn--ghost" onClick={startEditProfile}>
+                    Изменить
+                </button>
+            </>
+        );
+    };
+
     const renderBody = () => {
-        if (done) {
+        if (resultStatus !== null) {
             return (
                 <div className="loan-form__center">
                     <h2 className="loan-form__title">Заявка отправлена</h2>
-                    <p className="loan-form__text">Мы сообщим о решении по SMS и на почту.</p>
-                    <button type="button" className="loan-form__btn" onClick={onClose}>
-                        Закрыть
-                    </button>
+                    <p className="loan-form__text">Статус: {statusLabel(resultStatus)}</p>
+                    <div className="loan-form__footer">
+                        <button
+                            type="button"
+                            className="loan-form__btn"
+                            onClick={() => {
+                                onClose();
+                                navigate('/requests');
+                            }}
+                        >
+                            Мои заявки
+                        </button>
+                        <button type="button" className="loan-form__btn loan-form__btn--ghost" onClick={onClose}>
+                            Закрыть
+                        </button>
+                    </div>
                 </div>
             );
         }
@@ -238,7 +437,7 @@ function LoanApplicationForm({ product, isLoggedIn, onLogin, onClose, onSubmit, 
                 <div className="loan-form__center">
                     <h2 className="loan-form__title">Войдите, чтобы подать заявку</h2>
                     <p className="loan-form__text">Заявка на «{product.name}» сохранится в вашем кабинете.</p>
-                    <button type="button" className="loan-form__btn" onClick={onLogin}>
+                    <button type="button" className="loan-form__btn" onClick={openLogin}>
                         Войти
                     </button>
                 </div>
@@ -248,190 +447,86 @@ function LoanApplicationForm({ product, isLoggedIn, onLogin, onClose, onSubmit, 
         return (
             <>
                 <div className="loan-form__progress">
-                    Шаг {step + 1} из {STEP_TITLES.length} · {product.name}
+                    Шаг {step + 1} из {STEP_TITLES.length} · {selected?.name ?? product.name}
                 </div>
                 <h2 className="loan-form__title">{STEP_TITLES[step]}</h2>
 
                 {step === 0 && (
                     <>
-                        <h3 className="loan-form__subtitle">Сумма и срок</h3>
-                        <TextField
-                            label="Сумма, ₽"
-                            type="number"
-                            value={data.amount}
-                            onChange={(v) => set('amount', v)}
-                            hint={`От ${money(minAmount)} до ${money(maxAmount)} ₽`}
-                        />
-                        <TextField
-                            label="Срок, мес."
-                            type="number"
-                            value={data.term}
-                            onChange={(v) => set('term', v)}
-                            hint={`От ${product.min_term_months} до ${product.max_term_months} мес.`}
-                        />
-                        <TextField
-                            label="Цель кредита"
-                            value={PURPOSE_LABELS[data.purpose]}
-                            onChange={() => {}}
-                            disabled
-                        />
-
-                        <h3 className="loan-form__subtitle">Контактные данные</h3>
-                        <div className="loan-form__warning" role="alert">
-                            <span className="loan-form__warning-icon" aria-hidden="true">
-                                ⚠
-                            </span>
-                            Проверьте, что введённые данные совпадают с паспортными
-                        </div>
-                        <TextField
-                            label="Фамилия"
-                            value={data.lastName}
-                            onChange={(v) => set('lastName', v)}
-                            hint="Укажите точно как в паспорте"
-                        />
-                        <TextField
-                            label="Имя"
-                            value={data.firstName}
-                            onChange={(v) => set('firstName', v)}
-                            hint="Укажите точно как в паспорте"
-                        />
-                        <TextField
-                            label="Отчество"
-                            value={data.middleName}
-                            disabled={data.noMiddleName}
-                            onChange={(v) => set('middleName', v)}
-                            hint="Укажите точно как в паспорте"
-                        />
-                        <label className="loan-form__check">
-                            <input
-                                type="checkbox"
-                                checked={data.noMiddleName}
-                                onChange={(e) => {
-                                    set('noMiddleName', e.target.checked);
-                                    if (e.target.checked) set('middleName', '');
-                                }}
-                            />
-                            <span>По паспорту без отчества</span>
+                        <label className="loan-form__field">
+                            <span className="loan-form__label">Продукт</span>
+                            <select
+                                className="loan-form__input"
+                                value={productId}
+                                onChange={(e) => changeProduct(e.target.value)}
+                            >
+                                {(products.length > 0 ? products : [product]).map((p) => (
+                                    <option key={p.id} value={p.id}>
+                                        {p.name}
+                                    </option>
+                                ))}
+                            </select>
                         </label>
-
-                        <div className="loan-form__row">
-                            <TextField
-                                label="Мобильный телефон"
-                                type="tel"
-                                placeholder="+7 ("
-                                value={data.phone}
-                                onChange={(v) => set('phone', v)}
-                                hint="Пришлём SMS с решением по кредиту"
+                        {selected && (
+                            <>
+                                <TextField
+                                    label="Сумма, ₽"
+                                    type="number"
+                                    value={amount}
+                                    onChange={setAmount}
+                                    hint={`От ${money(selected.min_amount)} до ${money(selected.max_amount)} ₽`}
+                                />
+                                <TextField
+                                    label="Срок, мес."
+                                    type="number"
+                                    value={term}
+                                    onChange={setTerm}
+                                    hint={`От ${selected.min_term_months} до ${selected.max_term_months} мес.`}
+                                />
+                            </>
+                        )}
+                        <label className="loan-form__field">
+                            <span className="loan-form__label">Цель кредита</span>
+                            <textarea
+                                className="loan-form__input"
+                                rows={3}
+                                maxLength={COMMENT_MAX}
+                                value={comment}
+                                onChange={(e) => setComment(e.target.value)}
                             />
-                            <TextField
-                                label="Электронная почта"
-                                type="email"
-                                value={data.email}
-                                onChange={(v) => set('email', v)}
-                                hint="Отправим кредитный договор"
-                            />
-                        </div>
-
-                        <label className="loan-form__check">
-                            <input
-                                type="checkbox"
-                                checked={data.agreeData}
-                                onChange={(e) => set('agreeData', e.target.checked)}
-                            />
-                            <span>
-                                Я соглашаюсь с условиями и даю своё согласие на обработку и использование моих
-                                персональных данных, и разрешаю сделать запрос в бюро кредитных историй
+                            <span className="loan-form__hint">
+                                {comment.length} / {COMMENT_MAX}
                             </span>
                         </label>
-                        <label className="loan-form__check">
-                            <input
-                                type="checkbox"
-                                checked={data.agreeAds}
-                                onChange={(e) => set('agreeAds', e.target.checked)}
-                            />
-                            <span>
-                                Я даю согласие на получение рекламы, а также иной информации и предложений банка и
-                                его партнёров
-                            </span>
-                        </label>
+                        {payment && (
+                            <p className="loan-form__text">
+                                Ежемесячный платёж: {money(payment.monthly_payment)} ₽ · Всего: {money(payment.total)} ₽
+                                · Переплата: {money(payment.overpayment)} ₽
+                            </p>
+                        )}
                     </>
                 )}
 
-                {step === 1 && (
-                    <>
-                        <TextField
-                            label="Компания-работодатель"
-                            value={data.employer}
-                            onChange={(v) => set('employer', v)}
-                        />
-                        <TextField
-                            label="Адрес работодателя"
-                            value={data.employerAddress}
-                            onChange={(v) => set('employerAddress', v)}
-                        />
-                        <TextField
-                            label="Уровень дохода в месяц, ₽"
-                            type="number"
-                            value={data.salary}
-                            onChange={(v) => set('salary', v)}
-                        />
-                    </>
-                )}
+                {step === 1 && renderProfile()}
 
                 {step === 2 && (
                     <>
-                        <TextField
-                            label="Стаж на текущем месте, мес."
-                            type="number"
-                            value={data.experience}
-                            onChange={(v) => set('experience', v)}
-                        />
-                        <TextField
-                            label="Должность"
-                            value={data.position}
-                            onChange={(v) => set('position', v)}
-                        />
-                        <TextField
-                            label="Телефон руководства"
-                            type="tel"
-                            value={data.managerPhone}
-                            onChange={(v) => set('managerPhone', v)}
-                            hint="Номер, по которому могут ответить на вопросы о вас"
-                        />
-                    </>
-                )}
-
-                {step === 3 && (
-                    <>
-                        <SelectField
-                            label="Образование"
-                            value={data.education}
-                            options={EDUCATION}
-                            onChange={(v) => set('education', v)}
-                        />
-                        <SelectField
-                            label="Семейное положение"
-                            value={data.maritalStatus}
-                            options={MARITAL}
-                            onChange={(v) => set('maritalStatus', v)}
-                        />
-                    </>
-                )}
-
-                {step === 4 && (
-                    <>
-                        <TextField
-                            label="ФИО контактного лица"
-                            value={data.contactPerson}
-                            onChange={(v) => set('contactPerson', v)}
-                            hint="Позвоним этому человеку, если не дозвонимся до вас"
-                        />
-                        <TextField
-                            label="Телефон контактного лица"
-                            type="tel"
-                            value={data.contactPhone}
-                            onChange={(v) => set('contactPhone', v)}
-                        />
+                        <label className="loan-form__check">
+                            <input
+                                type="checkbox"
+                                checked={agreeData}
+                                onChange={(e) => setAgreeData(e.target.checked)}
+                            />
+                            <span>Я соглашаюсь с условиями и даю согласие на обработку моих персональных данных</span>
+                        </label>
+                        <label className="loan-form__check">
+                            <input
+                                type="checkbox"
+                                checked={agreeBureau}
+                                onChange={(e) => setAgreeBureau(e.target.checked)}
+                            />
+                            <span>Я разрешаю сделать запрос в бюро кредитных историй</span>
+                        </label>
                     </>
                 )}
 
@@ -449,7 +544,7 @@ function LoanApplicationForm({ product, isLoggedIn, onLogin, onClose, onSubmit, 
                         <button
                             type="button"
                             className="loan-form__btn"
-                            disabled={!isStepFilled(step, data)}
+                            disabled={!isStepFilled(step)}
                             onClick={() => setStep((s) => s + 1)}
                         >
                             Продолжить
@@ -458,7 +553,7 @@ function LoanApplicationForm({ product, isLoggedIn, onLogin, onClose, onSubmit, 
                         <button
                             type="button"
                             className="loan-form__btn"
-                            disabled={!isStepFilled(step, data)}
+                            disabled={!isStepFilled(step)}
                             onClick={() => setConfirmOpen(true)}
                         >
                             Отправить
@@ -480,9 +575,7 @@ function LoanApplicationForm({ product, isLoggedIn, onLogin, onClose, onSubmit, 
                 <div className="loan-form__overlay" role="alertdialog" aria-modal="true">
                     <div className="loan-form__alert">
                         <h3 className="loan-form__subtitle">Отправить заявку?</h3>
-                        <p className="loan-form__text">
-                            Проверьте, что данные совпадают с паспортными. После отправки изменить их нельзя.
-                        </p>
+                        <p className="loan-form__text">Проверьте данные. После отправки изменить заявку нельзя.</p>
                         {error && <p className="loan-form__error">{error}</p>}
                         <div className="loan-form__footer">
                             <button
