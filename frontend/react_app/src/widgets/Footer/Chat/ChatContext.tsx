@@ -7,14 +7,26 @@ import {
     useRef,
     type ReactNode,
 } from 'react';
-import { streamReply } from './ChatService';
+import { ApiError } from '../../../shared/api/client';
+import { sendChat } from './ChatService';
 
 export type Message = {
     id: string;
     role: 'user' | 'assistant';
     text: string;
     status?: 'streaming' | 'done';
+    error?: boolean;
 };
+
+/** Текст ошибки для пузыря ассистента. */
+function errorText(e: unknown): string {
+    if (e instanceof ApiError) {
+        if (e.status === 503) return 'Ассистент временно недоступен';
+        if (e.status === 401 || e.status === 403) return 'Войдите, чтобы пользоваться чатом';
+        return e.message || 'Не удалось получить ответ.';
+    }
+    return 'Не удалось получить ответ.';
+}
 
 type ChatContextValue = {
     messages: Message[];
@@ -39,6 +51,13 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
         streamingRef.current = true;
         const assistantId = crypto.randomUUID();
+        // В историю для бэкенда идут только успешные сообщения
+        const history = [
+            ...messages
+                .filter((m) => m.text && !m.error)
+                .map((m) => ({ role: m.role, content: m.text })),
+            { role: 'user' as const, content: text },
+        ];
 
         setMessages((prev) => [
             ...prev,
@@ -52,17 +71,16 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             setMessages((prev) => prev.map((m) => (m.id === assistantId ? fn(m) : m)));
 
         try {
-            for await (const chunk of streamReply(text)) {
-                patch((m) => ({ ...m, text: m.text + chunk }));
-            }
-        } catch {
-            patch((m) => ({ ...m, text: m.text || 'Не удалось получить ответ.' }));
+            const reply = await sendChat(history);
+            patch((m) => ({ ...m, text: reply }));
+        } catch (e) {
+            patch((m) => ({ ...m, text: errorText(e), error: true }));
         } finally {
             patch((m) => ({ ...m, status: 'done' }));
             streamingRef.current = false;
             setIsStreaming(false);
         }
-    }, [input, isStreaming]);
+    }, [input, messages]);
 
     const value = useMemo(
         () => ({ messages, input, setInput, isStreaming, send }),
@@ -77,4 +95,3 @@ export function useChat() {
     if (!ctx) throw new Error('useChat must be used inside <ChatProvider>');
     return ctx;
 }
-

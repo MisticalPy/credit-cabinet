@@ -440,12 +440,10 @@
 }
 
 .SideNavLogin {
-    padding: 10px 22px;
-    border-radius: 12px;
-    background: var(--red);
     color: #fff;
-    font-size: 14px;
-    font-weight: 600;
+    margin-left: 8px;
+    font-size: 16px;
+    font-weight: 400;
     cursor: pointer;
     user-select: none;
     transition: filter 0.2s ease, transform 0.1s ease;

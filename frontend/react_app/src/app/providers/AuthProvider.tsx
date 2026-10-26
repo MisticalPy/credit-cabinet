@@ -14,7 +14,8 @@ import {
     type AuthStatus,
     type Credentials,
 } from "../../entities/session/model/Auth-context";
-import { LoginModal } from "../../pages/Login/UI/LoginModal";
+
+
 
 type State = { status: AuthStatus; user: User | null };
 
@@ -78,7 +79,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return (
         <AuthContext.Provider value={value}>
             {children}
-            <LoginModal />
         </AuthContext.Provider>
     );
 }
