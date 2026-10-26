@@ -23,7 +23,7 @@ services:
 
   migrate:
     <<: *app_setup
-    command: ["python", "manage.py", "migrate", "--noinput"]
+    command: ["sh", "-c", "python manage.py migrate --noinput && python manage.py seed"]
     depends_on:
       db:
         condition: service_healthy
@@ -35,6 +35,14 @@ services:
     depends_on:
       migrate:
         condition: service_completed_successfully
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend/react_app
+    ports:
+      - "8080:80"
+    depends_on:
+      - web
     restart: unless-stopped
 
 volumes:
