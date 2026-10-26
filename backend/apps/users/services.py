@@ -13,12 +13,14 @@ def normalize_username(username: str) -> str:
 
 
 MANAGERS_GROUP = "Менеджеры"
-# (app_label, codename): менеджер смотрит и меняет заявки и продукты
+# (app_label, codename): менеджер смотрит и меняет заявки и продукты,
+# историю статусов (инлайн в заявке) только смотрит
 MANAGER_PERMISSIONS = (
     ("applications", "view_loanapplication"),
     ("applications", "change_loanapplication"),
     ("products", "view_creditproduct"),
     ("products", "change_creditproduct"),
+    ("applications", "view_applicationstatushistory"),
 )
 
 

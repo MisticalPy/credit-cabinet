@@ -1,10 +1,11 @@
 import pytest
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 from django.core.management import call_command
 
 from apps.applications.models import LoanApplication
 from apps.products.models import CreditProduct
 from apps.users.models import BusinessProfile, User
+from apps.users.services import ensure_managers_group
 
 pytestmark = pytest.mark.django_db
 
@@ -71,7 +72,17 @@ def test_seed_managers_group_permissions() -> None:
         "change_loanapplication",
         "view_creditproduct",
         "change_creditproduct",
+        "view_applicationstatushistory",
     }
+
+
+def test_ensure_managers_group_adds_history_view_to_existing_group() -> None:
+    group = ensure_managers_group()
+    group.permissions.remove(Permission.objects.get(codename="view_applicationstatushistory"))
+
+    ensure_managers_group()
+
+    assert group.permissions.filter(codename="view_applicationstatushistory").exists()
 
 
 def test_seed_is_idempotent() -> None:
