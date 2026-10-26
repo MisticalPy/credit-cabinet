@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from decimal import ROUND_HALF_UP, Decimal
+from decimal import ROUND_DOWN, ROUND_HALF_UP, Decimal
 
 from django.db.models import QuerySet
 
@@ -92,3 +92,15 @@ def match_products(
         )
         for p in products
     ]
+
+
+def max_amount_for_payment(
+    *, monthly_payment: Decimal, term_months: int, annual_rate: Decimal
+) -> Decimal:
+    """Обратный аннуитет. Округляем вниз до тысяч."""
+    monthly_rate = annual_rate / 100 / 12
+    if monthly_rate == 0:
+        amount = monthly_payment * term_months
+    else:
+        amount = monthly_payment * (1 - (1 + monthly_rate) ** -term_months) / monthly_rate
+    return (amount / 1000).to_integral_value(rounding=ROUND_DOWN) * 1000
