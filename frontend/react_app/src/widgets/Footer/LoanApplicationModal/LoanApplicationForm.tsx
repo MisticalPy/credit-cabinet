@@ -5,7 +5,7 @@ import { api, ApiError } from "../../../shared/api/client.ts";
 import { products as productsApi, profile as profileApi } from "../../../shared/api/endpoints.ts";
 import { useProducts } from "../../../entities/product/model/useProducts.ts";
 import { useAuth } from "../../../entities/session/model/Auth-context.ts";
-import { statusLabel } from './statusLabel.ts';
+import { statusLabel } from '../../../entities/application/model/statusLabels';
 import './LoanApplicationForm.css';
 
 const nf = new Intl.NumberFormat('ru-RU');
