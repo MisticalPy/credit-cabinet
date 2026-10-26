@@ -23,8 +23,8 @@
 
 <p>
   README is available in:
-  <a href="./README.ru.md">Russian</a> ·
-  <a href="./README.md">English</a>
+  <a href="./overview.ru.md">Russian</a> ·
+  <a href="./overview.en.md">English</a>
 </p>
 
 </div>
