@@ -7,6 +7,7 @@ import { RequireAuth } from "./Guards";
 // import Smart_calculator from "../../widgets/Footer/Smart_calculator";
 import AccountPage from "../../pages/Account";
 import ArchiveView from "../../widgets/Footer/Archive";
+import RequestsView from "../../widgets/Footer/RequestClients";
 
 const NotFound = () => (
     <div>
@@ -24,6 +25,7 @@ const Router = () => (
                 <Route path="dashboard" element={<DashboardView />} />
                 <Route path="archive" element={<ArchiveView />}/>
                 <Route path="faq" element={<FaqView />} />
+                <Route path="requests" element={<RequestsView />} />
                 {/*<Route path="calculator" element={<Smart_calculator />} />*/}
             </Route>
         </Route>

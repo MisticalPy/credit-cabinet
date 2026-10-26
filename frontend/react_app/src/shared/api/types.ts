@@ -36,3 +36,36 @@ export type Product = {
 
 export type Payment = { monthly_payment: string; total: string; overpayment: string };
 export type Match = { product: Product; payment: Payment };
+
+export type ApplicationIn = {
+    product_id: number;
+    amount: string;
+    term_months: number;
+    comment?: string;
+};
+
+export type ApplicationOut = {
+    id: number;
+    product_id: number;
+    product_name: string;
+    amount: string;
+    term_months: number;
+    rate: string;
+    monthly_payment: string;
+    comment: string;
+    status: string;
+    manager_comment: string;
+    counter_amount: string | null;
+    counter_term_months: number | null;
+    created_at: string;
+    updated_at: string;
+};
+
+export type ApplicationHistory = {
+    from_status: string;
+    to_status: string;
+    comment: string;
+    created_at: string;
+};
+
+export type ApplicationDetail = ApplicationOut & { history: ApplicationHistory[] };
