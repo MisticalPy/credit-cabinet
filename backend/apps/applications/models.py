@@ -79,7 +79,7 @@ class LoanApplication(models.Model):
         return f"Заявка №{self.pk}"
 
 
-class ApplicationStatusHistory(models.Model):  # noqa: DJ008
+class ApplicationStatusHistory(models.Model):
     application = models.ForeignKey(
         LoanApplication, on_delete=models.CASCADE, related_name="history", verbose_name="заявка"
     )
