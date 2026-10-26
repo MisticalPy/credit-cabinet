@@ -1,0 +1,23 @@
+.auth-locked {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    height: 688px;
+    min-height: 240px;
+    text-align: center;
+    color: #000000;
+    background: #ffffff;
+    border-radius: 28px;
+}
+
+.auth-locked button {
+    padding: 10px 22px;
+    border: 0;
+    border-radius: 12px;
+    background: #ef3124;
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+}

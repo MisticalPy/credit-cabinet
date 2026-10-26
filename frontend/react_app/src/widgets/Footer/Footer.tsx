@@ -1,7 +1,11 @@
 // @ts-ignore
-import React, { useState } from 'react';
+import React, { useMemo, useState, useEffect, useRef} from 'react';
 import { useLocation, useNavigate, Outlet } from 'react-router-dom';
-import { SPHERES, type LoanOption, type Range } from './loans';
+import type { Product, Purpose } from '../../shared/api/types';
+import { useProducts } from '../../entities/product/model/useProducts';
+import { groupByPurpose } from '../../entities/product/lib/groupByPurpose';
+import LoanApplicationForm from './LoanApplicationModal';
+import {useAuth} from "../../entities/session/model/Auth-context.ts";
 
 import './Footer.css';
 import FeedbackBuitton from "../../shared/UI/feedback";
@@ -61,9 +65,18 @@ function Icon({ name }: { name: string }) {
 const nf = new Intl.NumberFormat('ru-RU');
 const money = (n: number) => nf.format(n).replace(/\u00A0/g, ' ');
 
+type Range = [number, number];
+
+const PURPOSE_ICONS: Record<Purpose, string> = {
+    working_capital: '💳',
+    equipment: '🏭',
+    development: '📈',
+    refinancing: '🔄',
+};
+
 interface Props {
-    onApply?: (sphereId: string, option: LoanOption) => void;
-    onCalculate?: (sphereId: string, option: LoanOption) => void;
+    onApply?: (sphereId: string, option: Product) => void;
+    onCalculate?: (sphereId: string, option: Product) => void;
 }
 
 function Value({ label, range, unit }: { label: string; range: Range; unit: string }) {
@@ -90,8 +103,19 @@ function Value({ label, range, unit }: { label: string; range: Range; unit: stri
 
 
 function Footer({ onApply, onCalculate }: Props){
-    const [activeId, setActiveId] = useState(SPHERES[0].id);
-    const sphere = SPHERES.find((s) => s.id === activeId) ?? SPHERES[0];
+    const { status, user, openLogin } = useAuth();
+    const { products, loading, error } = useProducts();
+    const spheres = useMemo(() => groupByPurpose(products), [products]);
+    const [activeId, setActiveId] = useState<Purpose | null>(null);
+    const sphere = spheres.find((s) => s.id === activeId) ?? spheres[0];
+    const [applyRequest, setApplyRequest] = useState<{ product: Product; ts: number } | null>(null);
+    const formRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (applyRequest) {
+            formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, [applyRequest]);
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -100,15 +124,16 @@ function Footer({ onApply, onCalculate }: Props){
     const activeItem = currentPath || 'chat';
 
     const [collapsed, setCollapsed] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userName, setUserName] = useState('Дима Маленький'); // need replace on real data
+    // const [isLoggedIn, setIsLoggedIn] = useState(false);
+    // const [userName, setUserName] = useState('Дима Маленький'); // need replace on real data
 
 
-    // Enter button handler
-    const handleLogin = () => {
-        setUserName('Дима Маленький');
-        setIsLoggedIn(true);
-    };
+
+    // const handleLogin = () => {
+    //     // setUserName('Дима Маленький');
+    //     setIsLoggedIn(true);
+    //
+    // }
 
     const handleNavClick = (path: string) => {
         navigate(`/${path}`);
@@ -175,59 +200,82 @@ function Footer({ onApply, onCalculate }: Props){
                     <section className="loan-catalog">
                         <h2 className="loan-catalog__title">Кредиты для бизнеса</h2>
 
-                        <div className="loan-catalog__tabs" role="tablist">
-                            {SPHERES.map((s) => (
-                                <button
-                                    key={s.id}
-                                    role="tab"
-                                    aria-selected={s.id === activeId}
-                                    className={`loan-catalog__tab${s.id === activeId ? ' is-active' : ''}`}
-                                    onClick={() => setActiveId(s.id)}
-                                >
-                                    {s.title}
-                                </button>
-                            ))}
-                        </div>
+                        {loading && <p className="loan-catalog__note">Загрузка…</p>}
+                        {error && (
+                            <p className="loan-catalog__note">Не удалось загрузить кредиты: {error}</p>
+                        )}
 
-                        <div className="loan-catalog__grid" role="tabpanel">
-                            {sphere.options.map((opt) => (
-                                <article key={opt.id} className={`loan-card loan-card--${opt.id}`}>
-                                    <div className="loan-card__media" aria-hidden="true">
-                                        <span>{ICONS[opt.id]}</span>
-                                    </div>
+                        {sphere && (
+                            <>
+                                <div className="loan-catalog__tabs" role="tablist">
+                                    {spheres.map((s) => (
+                                        <button
+                                            key={s.id}
+                                            role="tab"
+                                            aria-selected={s.id === sphere.id}
+                                            className={`loan-catalog__tab${s.id === sphere.id ? ' is-active' : ''}`}
+                                            onClick={() => setActiveId(s.id)}
+                                        >
+                                            {s.title}
+                                        </button>
+                                    ))}
+                                </div>
 
-                                    <div className="loan-card__body">
-                                        <h3 className="loan-card__name">{opt.title}</h3>
+                                <div className="loan-catalog__grid" role="tabpanel">
+                                    {sphere.products.map((opt) => (
+                                        <article key={opt.id} className={`loan-card loan-card--${opt.purpose}`}>
+                                            <div className="loan-card__media" aria-hidden="true">
+                                                <span>{PURPOSE_ICONS[opt.purpose]}</span>
+                                            </div>
 
-                                        <div className="loan-card__params">
-                                            <Value label="Сумма" range={opt.amount} unit="₽" />
-                                            <Value label="Платёж" range={opt.payment} unit="₽" />
-                                            <Value label="Срок" range={opt.term} unit="мес." />
-                                        </div>
+                                            <div className="loan-card__body">
+                                                <h3 className="loan-card__name">{opt.name}</h3>
 
-                                        <div className="loan-card__actions">
-                                            <button
-                                                type="button"
-                                                className="loan-card__btn"
-                                                onClick={() => onApply?.(sphere.id, opt)}
-                                            >
-                                                Получить
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="loan-card__btn loan-card__btn--icon"
-                                                aria-label="Калькулятор"
-                                                onClick={() => onCalculate?.(sphere.id, opt)}
-                                            >
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                                                    <path d="M7 2h10a3 3 0 0 1 3 3v14a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3Zm0 2a1 1 0 0 0-1 1v3h12V5a1 1 0 0 0-1-1H7Zm11 6H6v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-9ZM8 12h2v2H8v-2Zm3 0h2v2h-2v-2Zm3 0h2v2h-2v-2ZM8 15h2v2H8v-2Zm3 0h2v2h-2v-2Zm3 0h2v2h-2v-2Z" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </article>
-                            ))}
-                        </div>
+                                                <div className="loan-card__params">
+                                                    <Value
+                                                        label="Сумма"
+                                                        range={[Number(opt.min_amount), Number(opt.max_amount)]}
+                                                        unit="₽"
+                                                    />
+                                                    <div className="loan-card__param">
+                                                        <span className="loan-card__label">Ставка</span>
+                                                        <b className="loan-card__value">{nf.format(Number(opt.rate))} %</b>
+                                                    </div>
+                                                    <Value
+                                                        label="Срок"
+                                                        range={[opt.min_term_months, opt.max_term_months]}
+                                                        unit="мес."
+                                                    />
+                                                </div>
+
+                                                <div className="loan-card__actions">
+                                                    <button
+                                                        type="button"
+                                                        className="loan-card__btn"
+                                                        onClick={() => {
+                                                            setApplyRequest({ product: opt, ts: Date.now() });
+                                                            onApply?.(sphere.id, opt);
+                                                        }}
+                                                    >
+                                                        Получить
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className="loan-card__btn loan-card__btn--icon"
+                                                        aria-label="Калькулятор"
+                                                        onClick={() => onCalculate?.(sphere.id, opt)}
+                                                    >
+                                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                                            <path d="M7 2h10a3 3 0 0 1 3 3v14a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3Zm0 2a1 1 0 0 0-1 1v3h12V5a1 1 0 0 0-1-1H7Zm11 6H6v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-9ZM8 12h2v2H8v-2Zm3 0h2v2h-2v-2Zm3 0h2v2h-2v-2ZM8 15h2v2H8v-2Zm3 0h2v2h-2v-2Zm3 0h2v2h-2v-2Z" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </article>
+                                    ))}
+                                </div>
+                            </>
+                        )}
 
                         <p className="loan-catalog__note">
                             Указаны ориентировочные диапазоны. Итоговые условия определяет кредитор.
@@ -279,16 +327,13 @@ function Footer({ onApply, onCalculate }: Props){
                                         <div className="SideNavAvatar">
                                             <Icon name="user" />
                                         </div>
-                                        {isLoggedIn ? (
-                                            <div className="SideNavUserName">{userName}</div>
+
+                                        {status === 'ready' ? (
+                                            <div className="SideNavUserName">{user?.username}</div>
                                         ) : (
-                                            <div
-                                                className="SideNavLogin"
-                                                role="button"
-                                                tabIndex={0}
-                                                onClick={handleLogin}
-                                                onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-                                            >
+                                            <div className="SideNavLogin" role="button" tabIndex={0}
+                                                 onClick={openLogin}
+                                                 onKeyDown={(e) => e.key === 'Enter' && openLogin()}>
                                                 Войти
                                             </div>
                                         )}
@@ -301,6 +346,16 @@ function Footer({ onApply, onCalculate }: Props){
                             </div>
                         </div>
                     </section>
+                    <div ref={formRef}>
+                        {applyRequest && (
+                            <LoanApplicationForm
+                                product={applyRequest.product}
+                                isLoggedIn={status === 'ready'}
+                                onLogin={openLogin}
+                                onClose={() => setApplyRequest(null)}
+                            />
+                        )}
+                    </div>
                 </div>
             </div>
         </>

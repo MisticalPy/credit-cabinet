@@ -62,25 +62,28 @@
     cursor: pointer;
 }
 
-/* Locked content area for guests (see guards.tsx) */
+/* Locked content area for Guards.tsx */
 .auth-locked {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 12px;
-    height: 100%;
+    height: 688px;
     min-height: 240px;
     text-align: center;
-    color: #ffffff;
+    color: #000000;
+    background: #ffffff;
+    border-radius: 28px;
 }
 
 .auth-locked button {
-    padding: 10px 20px;
+    padding: 10px 22px;
     border: 0;
-    border-radius: 8px;
+    border-radius: 12px;
     background: #ef3124;
     color: #fff;
     font: inherit;
     cursor: pointer;
 }
+
