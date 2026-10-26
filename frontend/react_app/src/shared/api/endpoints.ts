@@ -1,5 +1,5 @@
 import { api } from "./client";
-import type { Match, Payment, Product, Profile, User } from "./types";
+import type { ApplicationDetail, ApplicationIn, ApplicationOut, Match, Payment, Product, Profile, User } from "./types";
 
 type Credentials = { username: string; password: string };
 type ProfileIn = Omit<Profile, "business_age_months">;
@@ -26,4 +26,14 @@ export const products = {
         api<Payment>(`/products/${id}/calculate?${new URLSearchParams({ amount, term: String(term) })}`),
     match: (q: { purpose: string; amount: string; term: number; collateral?: string }) =>
         api<Match[]>(`/products/match?${new URLSearchParams({ ...q, term: String(q.term) } as Record<string, string>)}`),
+};
+
+export const applications = {
+    list: () => api<ApplicationOut[]>("/applications"),
+    get: (id: number) => api<ApplicationDetail>(`/applications/${id}`),
+    create: (body: ApplicationIn) =>
+        api<ApplicationOut>("/applications", { method: "POST", body: JSON.stringify(body) }),
+    submit: (id: number) => api<ApplicationOut>(`/applications/${id}/submit`, { method: "POST" }),
+    acceptOffer: (id: number) =>
+        api<ApplicationOut>(`/applications/${id}/accept-offer`, { method: "POST" }),
 };
