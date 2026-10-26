@@ -3,6 +3,7 @@ import { applications } from '../../../shared/api/endpoints';
 import type { ApplicationDetail, ApplicationOut } from '../../../shared/api/types';
 import { statusLabel } from '../../../entities/application/model/statusLabels';
 import '../Archive/ArchiveView.css';
+import './RequestsView.css';
 
 const money = (v: string) => `${Number(v).toLocaleString('ru-RU')} ₽`;
 const date = (v: string) => new Date(v).toLocaleDateString('ru-RU');
@@ -61,7 +62,7 @@ export default function RequestsView() {
 
     if (detail) {
         return (
-            <section className="Archive" aria-label="Заявка">
+            <section className="Archive RequestDetail" aria-label="Заявка">
                 <button type="button" className="ArchiveBtn" onClick={() => setDetail(null)}>
                     ← К списку
                 </button>
@@ -69,18 +70,31 @@ export default function RequestsView() {
                     {detail.product_name} — {statusLabel(detail.status)}
                 </h3>
                 {error && <p role="alert">{error}</p>}
-                <p>
-                    Сумма: {money(detail.amount)}; срок: {detail.term_months} мес.; ставка: {detail.rate}%;
-                    платёж: {money(detail.monthly_payment)}
-                </p>
-                {detail.manager_comment && <p>Комментарий банка: {detail.manager_comment}</p>}
+                <dl className="RequestTerms">
+                    <dt>Сумма</dt>
+                    <dd>{money(detail.amount)}</dd>
+                    <dt>Срок</dt>
+                    <dd>{detail.term_months} мес.</dd>
+                    <dt>Ставка</dt>
+                    <dd>{detail.rate}%</dd>
+                    <dt>Платёж</dt>
+                    <dd>{money(detail.monthly_payment)}</dd>
+                    {detail.manager_comment && (
+                        <>
+                            <dt>Комментарий банка</dt>
+                            <dd>{detail.manager_comment}</dd>
+                        </>
+                    )}
+                </dl>
                 {detail.status === 'counter_offer' && (
                     <div>
-                        <p>
-                            Встречное предложение:{' '}
-                            {detail.counter_amount !== null && money(detail.counter_amount)}
-                            {detail.counter_term_months !== null && `, ${detail.counter_term_months} мес.`}
-                        </p>
+                        <dl className="RequestTerms">
+                            <dt>Встречное предложение</dt>
+                            <dd>
+                                {detail.counter_amount !== null && money(detail.counter_amount)}
+                                {detail.counter_term_months !== null && `, ${detail.counter_term_months} мес.`}
+                            </dd>
+                        </dl>
                         <button
                             type="button"
                             className="ArchiveBtn"
